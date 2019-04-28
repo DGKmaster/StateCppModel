@@ -1,0 +1,13 @@
+### MSVS
+#####################
+### Cache
+.vs
+
+### Build output
+Debug
+
+### User based files
+*.filters
+*.user
+#####################
+
