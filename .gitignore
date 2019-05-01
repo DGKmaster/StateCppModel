@@ -14,4 +14,10 @@ Debug
 ### CodeLite
 #####################
 .codelite
+
+src/clite/Makefile
+
+src/clite/Simulation/Simulation.mk
+
+src/clite/Simulation/Simulation.txt
 #####################
