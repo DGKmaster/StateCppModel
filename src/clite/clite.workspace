@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="clite" Database="" Version="10.0.0">
   <Project Name="Simulation" Path="Simulation/Simulation.project" Active="Yes"/>
+  <Project Name="Example" Path="Example/Example.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="Simulation" ConfigName="Debug"/>
+      <Project Name="Example" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
       <Project Name="Simulation" ConfigName="Release"/>
+      <Project Name="Example" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
