@@ -16,8 +16,11 @@ Debug
 .codelite
 
 src/clite/Makefile
+*.mk
+*.txt
+#####################
 
-src/clite/Simulation/Simulation.mk
-
-src/clite/Simulation/Simulation.txt
+### VS Code
+#####################
+ipch
 #####################
