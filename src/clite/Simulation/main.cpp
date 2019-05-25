@@ -163,27 +163,31 @@ class Matrix {
             
             matrix_out.show();
             
-            int i, j, k;
-            double ratio,a;
-
-            for(i = 0; i < n; i++) {
-                for(j = n; j < 2*n; j++) {
+            for(int16_t i = 0; i < n; i++) {
+                for(int16_t j = n; j < 2*n; j++) {
                     if(i==(j-n)) {
-                        matrix_out.mx[i*2*n + j] = 1.0;
+                        matrix_out.mx[i*2*n + j] = 1;
                     }
                     else {
-                        matrix_out.mx[i*2*n + j] = 0.0;
+                        matrix_out.mx[i*2*n + j] = 0;
                     }
                 }
             }
             
             matrix_out.show();
             
-            for(i = 0; i < n; i++) {
-                for(j = 0; j < n; j++) {
+            for(uint16_t i = 0; i < n; i++) {
+                for(uint16_t j = 0; j < n; j++) {
                     if(i != j) {
-                        ratio = matrix_out.mx[j*2*n + i]/matrix_out.mx[i*2*n + i];
-                        for(k = 0; k < 2*n; k++) {
+                        double ratio;
+                        
+                        if(matrix_out.mx[i*2*n + i] != 0) {
+                            ratio = matrix_out.mx[j*2*n + i]/matrix_out.mx[i*2*n + i];
+                        }
+                        else {
+                            ratio = 1;
+                        }
+                        for(uint16_t k = 0; k < 2*n; k++) {
                             matrix_out.mx[j*2*n + k] -= ratio * matrix_out.mx[i*2*n + k];
                         }
                     }
@@ -192,9 +196,15 @@ class Matrix {
             
             matrix_out.show();
             
-            for(i = 0; i < n; i++) {
-                a = matrix_out.mx[i*2*n + i];
-                for(j = 0; j < 2*n; j++) {
+            for(uint16_t i = 0; i < n; i++) {
+                double a;
+                if(matrix_out.mx[i*2*n + i] != 0) {
+                    a = matrix_out.mx[i*2*n + i];
+                }
+                else {
+                    a = 1;
+                }
+                for(uint16_t j = 0; j < 2*n; j++) {
                     matrix_out.mx[i*2*n + j] /= a;
                 }
             }
