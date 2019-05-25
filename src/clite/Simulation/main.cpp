@@ -79,10 +79,10 @@ class Matrix {
             Matrix matrix_out(this->num_rows, matrix.num_columns);
 
             /// Multiplying matrix a and b and storing in array
-            for(uint16_t i = 0; i < this->num_rows; ++i) {
-                for(uint16_t j = 0; j < matrix.num_columns; ++j) {
-                    for(uint16_t k = 0; k < this->num_columns; ++k) {
-                        matrix_out.mx[i*matrix_out.num_columns + j] += matrix.mx[i*matrix.num_columns + k] * this->mx[k*this->num_columns + j];
+            for(uint16_t i = 0; i < this->num_rows; i++) {
+                for(uint16_t j = 0; j < matrix.num_columns; j++) {
+                    for(uint16_t k = 0; k < this->num_columns; k++) {
+                        matrix_out.mx[i*matrix_out.num_columns + j] += this->mx[i*this->num_columns + k] * matrix.mx[k*matrix.num_columns + j];
                     }
                 }
             }
@@ -96,16 +96,19 @@ class Matrix {
          * @return Result
          */
         Matrix operator+(const Matrix &matrix) const {
-            if(this->num_columns != matrix.num_columns && this->num_rows != matrix.num_rows) {
+            const uint16_t N = this->num_rows;
+            const uint16_t M = this->num_columns;
+
+            if(N != matrix.num_rows && M != matrix.num_columns) {
                 std::cout << "Bad dimensions" << std::endl;
             }
 
-            Matrix matrix_out(this->num_rows, this->num_columns);
+            Matrix matrix_out(N, M);
 
             /// Multiplying matrix a and b and storing in array
-            for(uint16_t i = 0; i < matrix_out.num_rows; ++i) {
-                for(uint16_t j = 0; j < matrix_out.num_columns; ++j) {
-                    matrix_out.mx[i*matrix_out.num_columns + j] = this->mx[i*matrix.num_columns + j] + matrix.mx[i*matrix.num_columns + j];
+            for(uint16_t i = 0; i < N; i++) {
+                for(uint16_t j = 0; j < M; j++) {
+                    matrix_out.mx[i*M + j] = this->mx[i*M + j] + matrix.mx[i*M + j];
                 }
             }
 
@@ -118,16 +121,19 @@ class Matrix {
          * @return Result
          */
         Matrix operator-(const Matrix &matrix) const {
-            if(this->num_columns != matrix.num_columns && this->num_rows != matrix.num_rows) {
+            const uint16_t N = this->num_rows;
+            const uint16_t M = this->num_columns;
+
+            if(N != matrix.num_columns && M != matrix.num_rows) {
                 std::cout << "Bad dimensions" << std::endl;
             }
 
-            Matrix matrix_out(this->num_rows, this->num_columns);
+            Matrix matrix_out(N, M);
 
             /// Multiplying matrix a and b and storing in array
-            for(uint16_t i = 0; i < matrix_out.num_rows; ++i) {
-                for(uint16_t j = 0; j < matrix_out.num_columns; ++j) {
-                    matrix_out.mx[i*matrix_out.num_columns + j] = this->mx[i*matrix.num_columns + j] - matrix.mx[i*matrix.num_columns + j];
+            for(uint16_t i = 0; i < N; i++) {
+                for(uint16_t j = 0; j < M; j++) {
+                    matrix_out.mx[i*M + j] = this->mx[i*M + j] - matrix.mx[i*M + j];
                 }
             }
 
@@ -139,9 +145,12 @@ class Matrix {
          * @param matrix rvalue
          */
         void operator=(const Matrix &matrix) {
-            for(uint16_t i = 0; i < this->num_rows; ++i) {
-                for(uint16_t j = 0; j < this->num_columns; ++j) {
-                    this->mx[i*this->num_columns + j] = matrix.mx[i*matrix.num_columns + j];
+            const uint16_t N = this->num_rows;
+            const uint16_t M = this->num_columns;
+
+            for(uint16_t i = 0; i < N; i++) {
+                for(uint16_t j = 0; j < M; j++) {
+                    this->mx[i*M + j] = matrix.mx[i*M + j];
                 }
             }
         }
@@ -149,6 +158,24 @@ class Matrix {
 
         /// Other functions
         ///////////////////////////////////////////////////////////
+        /**
+         * @brief Display matrix using stdout
+         */
+        void show(const std::string& text_out = "Output matrix: ") const {
+            const uint16_t N = this->num_rows;
+            const uint16_t M = this->num_columns;
+            
+            std::cout << text_out << std::endl;
+            
+            for(uint16_t i = 0; i < N; ++i) {
+                for(int16_t j = 0; j < M; ++j) {
+                    std::cout << " " << this->mx[i*M + j];
+                    if(j == M - 1) {
+                        std::cout << std::endl;
+                    }
+                }
+            }
+        }
 
         /**
         * @brief Function to get cofactor of A[p][q] in temp[][]. n is current dimension of A[][]
@@ -160,9 +187,9 @@ class Matrix {
          */
         Matrix getCofactor(const int16_t& p, const int16_t& q, const int16_t& n) {
             const uint16_t N = this->num_rows;
-            
+
             Matrix matrix_out(N, N);
-            
+
             uint16_t i = 0;
             uint16_t j = 0;
 
@@ -172,7 +199,8 @@ class Matrix {
                     ///  Copying into temporary matrix only those element
                     ///  which are not in given row and column
                     if (row != p && col != q) {
-                        matrix_out.mx[i*N + j++] = this->mx[row*N + col];
+                        matrix_out.mx[i*N + j] = this->mx[row*N + col];
+                        j++;
 
                         /// Row is filled, so increase row index and
                         /// reset col index
@@ -183,8 +211,6 @@ class Matrix {
                     }
                 }
             }
-            
-            //matrix_out.show();
 
             return matrix_out;
         }
@@ -197,7 +223,7 @@ class Matrix {
         */
         double determinant(const int16_t& n) {
             const uint16_t N = this->num_rows;
-            
+
             /// Initialize result
             double D = 0;
 
@@ -233,7 +259,7 @@ class Matrix {
          */
         Matrix adjoint() {
             const uint16_t N = this->num_rows;
-            
+
             //if (N == 1) {
             //    double _out[] = {this->mx[0]};
             //    Matrix out(1, 1, _out);
@@ -257,11 +283,10 @@ class Matrix {
 
                     /// Interchanging rows and columns to get the
                     /// transpose of the cofactor matrix
-                    uint16_t xx = j*N + i;
                     matrix_out.mx[j*N + i] = _sign*_temp.determinant(N - 1);
                 }
             }
-            
+
             return matrix_out;
         }
 
@@ -270,7 +295,7 @@ class Matrix {
         */
         Matrix inverse() {
             const uint16_t N = this->num_rows;
-            
+
             /// Find determinant of A[][]
             double det = this->determinant(N);
 
@@ -284,8 +309,8 @@ class Matrix {
             adj = this->adjoint();
 
             /// Find Inverse using formula "inverse(A) = adj(A)/det(A)"
-            for (uint16_t i = 0; i < N; ++i) {
-                for (uint16_t j = 0; j < N; ++j) {
+            for (uint16_t i = 0; i < N; i++) {
+                for (uint16_t j = 0; j < N; j++) {
                     matrix_out.mx[i*N + j] = adj.mx[i*N + j] / det;
                 }
             }
@@ -295,9 +320,9 @@ class Matrix {
         ///////////////////////////////////////////////////////////
 };
 
-//Matrix control_signal(const double& time) {
-//    return Matrix(1, 1);
-//}
+Matrix control_signal(const double& time) {
+    return Matrix(1, 1);
+}
 
 /// Task data
 ///////////////////////////////////////////////////////////
@@ -322,36 +347,59 @@ int main() {
     /// Initialise all matrices
     ///////////////////////////////////////////////////////////
     double _A[] = {0, 1, 0, 0, 0, 1, -1.5, -5, -2};
-    Matrix A = Matrix(3, 3, _A);
+    Matrix A(3, 3, _A);
 
     double _B[] = {0, 0, 1};
-    Matrix B = Matrix(3, 1, _B);
+    Matrix B(3, 1, _B);
 
     double _C[] = {0.5, 0, 0};
-    Matrix C = Matrix(1, 3, _C);
+    Matrix C(1, 3, _C);
 
+    double _x[] = {0.5, 1, 1.5};
+    Matrix x(3, 1, _x);
 
-    double _x[] = {1, 0, 0};
-    Matrix x = Matrix(3, 1, _x);
+    Matrix u(1, 1);
+    Matrix y(3, 1);
+    ///////////////////////////////////////////////////////////
 
-    Matrix u = Matrix(1, 1);
-    Matrix y = Matrix(3, 1);
+    /// Transform continious to discrete
+    /// Ad = exp(A*dt);
+    /// Bd = inv(A)*(Ad - In)*B;
+    /// Cd = C;
+    ///////////////////////////////////////////////////////////
+    double _In[] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+    Matrix In(3, 3, _In);
+    
+    Matrix Ad(3, 3);
+    //Ad = A.exp();
+    
+    Matrix Bd(3, 1);
+    Bd = A.inverse()*(Ad - In) * B;
+    
+    Matrix Cd(1, 3);
+    Cd = C;
     ///////////////////////////////////////////////////////////
 
     /// Simulation
     ///////////////////////////////////////////////////////////
-    x = A*x + B*u;
-    y = C*x;
+    x = Ad*x + Bd*u;
+    y = Cd*x;
 
-    x.show();
-    y.show();
+    x.show("X:");
+    y.show("Y:");
+    
+    double _D[] = {1, 2, 3, 4};
+    Matrix D(2, 2, _D);
 
-    //while (time < simulation_time) {
-    //    Matrix u = control_signal(time);
+    Matrix invA(3, 3);
+    invA = A.inverse();
+    invA.show("A inverse:");
 
-    //    time += time_step;
-    //    std::cout<<"Time: "<< time << std::endl;
-    //}
+    while (time < simulation_time) {
+       Matrix u = control_signal(time);
+       time += time_step;
+       //std::cout<<"Time: "<< time << std::endl;
+    }
     ///////////////////////////////////////////////////////////
 
     return 0;
