@@ -40,9 +40,9 @@ class Matrix {
             num_rows(r),
             num_columns(c),
             mx(new double[num_rows * num_columns]) {
-            for(uint8_t i = 0; i < num_rows; i++) {
-                for(uint8_t j = 0; j < num_columns; j++) {
-                    this->mx[i*num_columns + j] =  m[i*num_columns + j];
+            for(uint16_t i = 0; i < num_rows; i++) {
+                for(uint16_t j = 0; j < num_columns; j++) {
+                    this->mx[i*num_columns + j] = m[i*num_columns + j];
                 }
             }
         }
@@ -56,8 +56,8 @@ class Matrix {
             num_rows(r),
             num_columns(c),
             mx(new double[num_rows * num_columns]) {
-            for(uint8_t i = 0; i < num_rows; i++) {
-                for(uint8_t j = 0; j < num_columns; j++) {
+            for(uint16_t i = 0; i < num_rows; i++) {
+                for(uint16_t j = 0; j < num_columns; j++) {
                     this->mx[i*num_columns + j] = 0;
                 }
             }
@@ -79,9 +79,9 @@ class Matrix {
             Matrix matrix_out(this->num_rows, matrix.num_columns);
 
             /// Multiplying matrix a and b and storing in array
-            for(uint8_t i = 0; i < this->num_rows; ++i) {
-                for(uint8_t j = 0; j < matrix.num_columns; ++j) {
-                    for(uint8_t k = 0; k < this->num_columns; ++k) {
+            for(uint16_t i = 0; i < this->num_rows; ++i) {
+                for(uint16_t j = 0; j < matrix.num_columns; ++j) {
+                    for(uint16_t k = 0; k < this->num_columns; ++k) {
                         matrix_out.mx[i*matrix_out.num_columns + j] += matrix.mx[i*matrix.num_columns + k] * this->mx[k*this->num_columns + j];
                     }
                 }
@@ -103,8 +103,8 @@ class Matrix {
             Matrix matrix_out(this->num_rows, this->num_columns);
 
             /// Multiplying matrix a and b and storing in array
-            for(uint8_t i = 0; i < matrix_out.num_rows; ++i) {
-                for(uint8_t j = 0; j < matrix_out.num_columns; ++j) {
+            for(uint16_t i = 0; i < matrix_out.num_rows; ++i) {
+                for(uint16_t j = 0; j < matrix_out.num_columns; ++j) {
                     matrix_out.mx[i*matrix_out.num_columns + j] = this->mx[i*matrix.num_columns + j] + matrix.mx[i*matrix.num_columns + j];
                 }
             }
@@ -125,8 +125,8 @@ class Matrix {
             Matrix matrix_out(this->num_rows, this->num_columns);
 
             /// Multiplying matrix a and b and storing in array
-            for(uint8_t i = 0; i < matrix_out.num_rows; ++i) {
-                for(uint8_t j = 0; j < matrix_out.num_columns; ++j) {
+            for(uint16_t i = 0; i < matrix_out.num_rows; ++i) {
+                for(uint16_t j = 0; j < matrix_out.num_columns; ++j) {
                     matrix_out.mx[i*matrix_out.num_columns + j] = this->mx[i*matrix.num_columns + j] - matrix.mx[i*matrix.num_columns + j];
                 }
             }
@@ -139,8 +139,8 @@ class Matrix {
          * @param matrix rvalue
          */
         void operator=(const Matrix &matrix) {
-            for(uint8_t i = 0; i < this->num_rows; ++i) {
-                for(uint8_t j = 0; j < this->num_columns; ++j) {
+            for(uint16_t i = 0; i < this->num_rows; ++i) {
+                for(uint16_t j = 0; j < this->num_columns; ++j) {
                     this->mx[i*this->num_columns + j] = matrix.mx[i*matrix.num_columns + j];
                 }
             }
@@ -153,8 +153,8 @@ class Matrix {
         void show() {
             /// Displaying the multiplication of two matrix.
             std::cout << "Output Matrix: " << std::endl;
-            for(uint8_t i = 0; i < this->num_rows; ++i) {
-                for(int8_t j = 0; j < this->num_columns; ++j) {
+            for(uint16_t i = 0; i < this->num_rows; ++i) {
+                for(int16_t j = 0; j < this->num_columns; ++j) {
                     std::cout << " " << this->mx[i*this->num_columns + j];
                     if(j == this->num_columns - 1) {
                         std::cout << std::endl;
@@ -162,6 +162,7 @@ class Matrix {
                 }
             }
         }
+        ///////////////////////////////////////////////////////////
 };
 
 //Matrix control_signal(const double& time) {
