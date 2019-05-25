@@ -150,92 +150,147 @@ class Matrix {
         /// Other functions
         ///////////////////////////////////////////////////////////
 
-        Matrix inverse() {
-            Matrix matrix_out = Matrix(this->num_rows, this->num_columns*2);
+        /**
+        * @brief Function to get cofactor of A[p][q] in temp[][]. n is current dimension of A[][]
+        * @param A
+        * @param temp
+        * @param p
+        * @param q
+        * @param n
+         */
+        Matrix getCofactor(const int16_t& p, const int16_t& q, const int16_t& n) {
+            const uint16_t N = this->num_rows;
+            
+            Matrix matrix_out(N, N);
+            
+            uint16_t i = 0;
+            uint16_t j = 0;
 
-            const int n = this->num_rows;
+            /// Looping for each element of the matrix
+            for (uint16_t row = 0; row < n; row++) {
+                for (uint16_t col = 0; col < n; col++) {
+                    ///  Copying into temporary matrix only those element
+                    ///  which are not in given row and column
+                    if (row != p && col != q) {
+                        matrix_out.mx[i*N + j++] = this->mx[row*N + col];
 
-            for(uint16_t i_it = 0; i_it < n; i_it++) {
-                for(uint16_t j_it = 0; j_it < n; j_it++) {
-                    matrix_out.mx[i_it*2*n + j_it] = this->mx[i_it*n + j_it];
-                }
-            }
-            
-            matrix_out.show();
-            
-            for(int16_t i = 0; i < n; i++) {
-                for(int16_t j = n; j < 2*n; j++) {
-                    if(i==(j-n)) {
-                        matrix_out.mx[i*2*n + j] = 1;
-                    }
-                    else {
-                        matrix_out.mx[i*2*n + j] = 0;
-                    }
-                }
-            }
-            
-            matrix_out.show();
-            
-            for(uint16_t i = 0; i < n; i++) {
-                for(uint16_t j = 0; j < n; j++) {
-                    if(i != j) {
-                        double ratio;
-                        
-                        if(matrix_out.mx[i*2*n + i] != 0) {
-                            ratio = matrix_out.mx[j*2*n + i]/matrix_out.mx[i*2*n + i];
-                        }
-                        else {
-                            ratio = 1;
-                        }
-                        for(uint16_t k = 0; k < 2*n; k++) {
-                            matrix_out.mx[j*2*n + k] -= ratio * matrix_out.mx[i*2*n + k];
+                        /// Row is filled, so increase row index and
+                        /// reset col index
+                        if (j == n - 1) {
+                            j = 0;
+                            i++;
                         }
                     }
                 }
             }
             
-            matrix_out.show();
-            
-            for(uint16_t i = 0; i < n; i++) {
-                double a;
-                if(matrix_out.mx[i*2*n + i] != 0) {
-                    a = matrix_out.mx[i*2*n + i];
-                }
-                else {
-                    a = 1;
-                }
-                for(uint16_t j = 0; j < 2*n; j++) {
-                    matrix_out.mx[i*2*n + j] /= a;
-                }
-            }
-            
-            matrix_out.show();
+            //matrix_out.show();
 
-            Matrix matrix_return = Matrix(this->num_rows, this->num_columns);
-
-            for(uint16_t i_it = 0; i_it < n; i_it++) {
-                for(uint16_t j_it = n; j_it < 2*n; j_it++) {
-                    matrix_return.mx[i_it*n + j_it-n] = matrix_out.mx[i_it*2*n + j_it];
-                }
-            }
-
-            return matrix_return;
+            return matrix_out;
         }
 
         /**
-         * @brief Display matrix using stdout
+        * @brief Recursive function for finding determinant of matrix. n is current dimension of A[][].
+        * @param A
+        * @param n
+        * @return
+        */
+        double determinant(const int16_t& n) {
+            const uint16_t N = this->num_rows;
+            
+            /// Initialize result
+            double D = 0;
+
+            /// Base case : if matrix contains single element
+            if (n == 1) {
+                return this->mx[0];
+            }
+
+            /// To store cofactors
+            Matrix _temp(N, N);
+
+            /// To store sign multiplier
+            int16_t _sign = 1;
+
+            /// Iterate for each element of first row
+            for (uint16_t i = 0; i < n; i++) {
+                /// Getting Cofactor
+                _temp = this->getCofactor(0, i, n);
+
+                D += _sign * this->mx[0*N + i] * _temp.determinant(n - 1);
+
+                /// terms are to be added with alternate sign
+                _sign = -_sign;
+            }
+
+            return D;
+        }
+
+        /**
+         * @brief Function to get adjoint of A[N][N] in adj[N][N].
+         * @param A
+         * @param adj
          */
-        void show() {
-            /// Displaying the multiplication of two matrix.
-            std::cout << "Output Matrix: " << std::endl;
-            for(uint16_t i = 0; i < this->num_rows; ++i) {
-                for(int16_t j = 0; j < this->num_columns; ++j) {
-                    std::cout << " " << this->mx[i*this->num_columns + j];
-                    if(j == this->num_columns - 1) {
-                        std::cout << std::endl;
-                    }
+        Matrix adjoint() {
+            const uint16_t N = this->num_rows;
+            
+            //if (N == 1) {
+            //    double _out[] = {this->mx[0]};
+            //    Matrix out(1, 1, _out);
+            //    return out;
+            //}
+
+            Matrix matrix_out(N, N);
+
+            /// temp is used to store cofactors of A[][]
+            int16_t _sign = 1;
+            Matrix _temp(N, N);
+
+            for (uint16_t i = 0; i < N; i++) {
+                for (uint16_t j = 0; j < N; j++) {
+                    /// Get cofactor of A[i][j]
+                    _temp = this->getCofactor(i, j, N);
+
+                    /// sign of adj[j][i] positive if sum of row
+                    /// and column indexes is even.
+                    _sign = ((i + j) % 2 == 0)? 1: -1;
+
+                    /// Interchanging rows and columns to get the
+                    /// transpose of the cofactor matrix
+                    uint16_t xx = j*N + i;
+                    matrix_out.mx[j*N + i] = _sign*_temp.determinant(N - 1);
                 }
             }
+            
+            return matrix_out;
+        }
+
+        /**
+        * @brief Function to calculate and store inverse, returns false if matrix is singular
+        */
+        Matrix inverse() {
+            const uint16_t N = this->num_rows;
+            
+            /// Find determinant of A[][]
+            double det = this->determinant(N);
+
+            if (det == 0) {
+                std::cout << "Singular matrix, can't find its inverse" << std::endl;
+            }
+            Matrix matrix_out(N, N);
+
+            /// Find adjoint
+            Matrix adj(N, N);
+            adj = this->adjoint();
+
+            /// Find Inverse using formula "inverse(A) = adj(A)/det(A)"
+            for (uint16_t i = 0; i < N; ++i) {
+                for (uint16_t j = 0; j < N; ++j) {
+                    matrix_out.mx[i*N + j] = adj.mx[i*N + j] / det;
+                }
+            }
+
+            return matrix_out;
         }
         ///////////////////////////////////////////////////////////
 };
