@@ -147,6 +147,71 @@ class Matrix {
         }
         ///////////////////////////////////////////////////////////
 
+        /// Other functions
+        ///////////////////////////////////////////////////////////
+
+        Matrix inverse() {
+            Matrix matrix_out = Matrix(this->num_rows, this->num_columns*2);
+
+            const int n = this->num_rows;
+
+            for(uint16_t i_it = 0; i_it < n; i_it++) {
+                for(uint16_t j_it = 0; j_it < n; j_it++) {
+                    matrix_out.mx[i_it*2*n + j_it] = this->mx[i_it*n + j_it];
+                }
+            }
+            
+            matrix_out.show();
+            
+            int i, j, k;
+            double ratio,a;
+
+            for(i = 0; i < n; i++) {
+                for(j = n; j < 2*n; j++) {
+                    if(i==(j-n)) {
+                        matrix_out.mx[i*2*n + j] = 1.0;
+                    }
+                    else {
+                        matrix_out.mx[i*2*n + j] = 0.0;
+                    }
+                }
+            }
+            
+            matrix_out.show();
+            
+            for(i = 0; i < n; i++) {
+                for(j = 0; j < n; j++) {
+                    if(i != j) {
+                        ratio = matrix_out.mx[j*2*n + i]/matrix_out.mx[i*2*n + i];
+                        for(k = 0; k < 2*n; k++) {
+                            matrix_out.mx[j*2*n + k] -= ratio * matrix_out.mx[i*2*n + k];
+                        }
+                    }
+                }
+            }
+            
+            matrix_out.show();
+            
+            for(i = 0; i < n; i++) {
+                a = matrix_out.mx[i*2*n + i];
+                for(j = 0; j < 2*n; j++) {
+                    matrix_out.mx[i*2*n + j] /= a;
+                }
+            }
+            
+            matrix_out.show();
+
+            Matrix matrix_return = Matrix(this->num_rows, this->num_columns);
+
+            for(uint16_t i_it = 0; i_it < n; i_it++) {
+                for(uint16_t j_it = n; j_it < 2*n; j_it++) {
+                    matrix_return.mx[i_it*n + j_it-n] = matrix_out.mx[i_it*2*n + j_it];
+                }
+            }
+
+            return matrix_return;
+        }
+
         /**
          * @brief Display matrix using stdout
          */
