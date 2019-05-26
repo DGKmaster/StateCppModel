@@ -15,20 +15,20 @@ Cd = C;
 x = zeros(3, iterations);
 y = zeros(-1, iterations);
 
-for i=2:1000
-    x(:, i) = Ad*x(:, i-1) + Bd*input;
-    y(:, i) = Cd*x(:, i);
+% for i=2:iterations
+%     x(:, i) = Ad*x(:, i-1) + Bd*input;
+%     y(:, i) = Cd*x(:, i);
+% end
+
+% plot(y);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+x_i = zeros(2, iterations);
+A = [0 -1; omega^2 0];
+for i=2:iterations
+    MatExp = inv(eye(2)+A*T)*x_i(:,i-1);
+    x_i(:,i) = x_i(:,i) - A*MatExp*T;
 end
-
-plot(y);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-syms x_iminus1_up x_iminus1_down omega T x_init_up x_init_down;
-x_iminus1 = [x_iminus1_up; x_iminus1_down];
-x_init = [x_init_up; x_init_down];
-A = [0 -1;omega^2 0];
-
-MatExp = inv(eye(2)+A*T)*x_iminus1;
-x_i = x_iminus1 - A* MatExp*T;
+plot(x_i);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
