@@ -86,7 +86,7 @@ class Matrix {
          */
         Matrix operator*(const Matrix &matrix) const {
             if(this->num_columns != matrix.num_rows) {
-                std::cout << "Bad dimensions" << std::endl;
+                std::cout << "Bad dimensions =" << std::endl;
             }
 
             Matrix matrix_out(this->num_rows, matrix.num_columns);
@@ -128,7 +128,7 @@ class Matrix {
             const uint16_t M = this->num_columns;
 
             if(N != matrix.num_rows && M != matrix.num_columns) {
-                std::cout << "Bad dimensions" << std::endl;
+                std::cout << "Bad dimensions +" << std::endl;
             }
 
             Matrix matrix_out(N, M);
@@ -152,7 +152,7 @@ class Matrix {
             const uint16_t M = this->num_columns;
 
             if(N != matrix.num_columns && M != matrix.num_rows) {
-                std::cout << "Bad dimensions" << std::endl;
+                std::cout << "Bad dimensions -" << std::endl;
             }
 
             Matrix matrix_out(N, M);
