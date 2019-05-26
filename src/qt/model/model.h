@@ -67,6 +67,15 @@ class Matrix {
             }
         }
         ///////////////////////////////////////////////////////////
+        
+        /// Accessors
+        ///////////////////////////////////////////////////////////
+        double getM() {
+            double output = this->mx[0];
+
+            return output;
+        }
+        ///////////////////////////////////////////////////////////
 
         /// Operators overload
         ///////////////////////////////////////////////////////////
@@ -88,6 +97,21 @@ class Matrix {
                     for(uint16_t k = 0; k < this->num_columns; k++) {
                         matrix_out.mx[i*matrix_out.num_columns + j] += this->mx[i*this->num_columns + k] * matrix.mx[k*matrix.num_columns + j];
                     }
+                }
+            }
+
+            return matrix_out;
+        }
+
+        Matrix operator*(const double &value) const {
+            const uint16_t N = this->num_rows;
+            const uint16_t M = this->num_columns;
+
+            Matrix matrix_out(N, M);
+
+            for(uint16_t i = 0; i < N; i++) {
+                for(uint16_t j = 0; j < M; j++) {
+                    matrix_out.mx[i*M + j] = this->mx[i*M + j] * value;
                 }
             }
 
@@ -330,28 +354,31 @@ private:
     double time_step = 0.01;
     double simulation_time = 5;
 
-    Matrix A;
-    Matrix B;
-    Matrix C;
-    Matrix x;
-    Matrix y;
+    Matrix A = Matrix(3, 3);
+    Matrix B = Matrix(3, 1);
+    Matrix C = Matrix(1, 3);
+    Matrix x = Matrix(3, 1);
+    Matrix y = Matrix(1, 1);
 
 public:
     ///////////////////////////////////////////////////////////
     Model() {
-        double _A[] = {0, 1, 0, 0, 0, 1, -1.5, -5, -2};
-        Matrix A(3, 3, _A);
+        // double _A[] = {0, 1, 0, 0, 0, 1, -1.5, -5, -2};
+        double _A[] = {0, 1, 0, 0, 0, 1, -0.2, -1, -1};
+        this->A = Matrix(3, 3, _A);
 
         double _B[] = {0, 0, 1};
-        Matrix B(3, 1, _B);
+        this->B = Matrix(3, 1, _B);
 
-        double _C[] = {0.5, 0, 0};
-        Matrix C(1, 3, _C);
+        // double _C[] = {0.5, 0, 0};
+        double _C[] = {2, 1, 0};
+        this->C = Matrix(1, 3, _C);
 
-        double _x[] = {0.5, 1, 1.5};
-        Matrix x(3, 1, _x);
+        double _x[] = {0, 0, 0};
+        this->x = Matrix(3, 1, _x);
 
-        Matrix y(1, 1);
+        this->y = Matrix(1, 1);
+        // x.show();
     }
 
     ~Model() {
@@ -360,14 +387,14 @@ public:
     ///////////////////////////////////////////////////////////
     
     double update(double input) {
-        // x = A*x + B*input;
-        // y = C*x;
+        x = A*x + B*input;
+        y = C*x;
 
-        // double output = y.getM();
-        
-        // return output;
+        double output = this->y.getM();
 
-        return 1.0;
+        return output;
+
+        // return 1.0;
     }
 };
 #endif // MODEL_H

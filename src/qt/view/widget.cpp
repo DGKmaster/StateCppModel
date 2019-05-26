@@ -74,7 +74,7 @@ Widget::Widget(QWidget *parent) :
     // --------------------------
     // Set sampling time here
     // --------------------------
-    timer->start(100);
+    timer->start(0.001);
     // --------------------------
     // Set sampling time here
     // --------------------------
