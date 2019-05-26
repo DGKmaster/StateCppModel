@@ -151,7 +151,7 @@ class Matrix {
             const uint16_t N = this->num_rows;
             const uint16_t M = this->num_columns;
 
-            if(N != matrix.num_columns && M != matrix.num_rows) {
+            if(N != matrix.num_rows && M != matrix.num_columns) {
                 std::cout << "Bad dimensions -" << std::endl;
             }
 
@@ -352,17 +352,15 @@ class Model
 /// Attributes
 ///////////////////////////////////////////////////////////
 private:
+    const double OMEGA = 10;
+    
     Matrix Ad = Matrix(3, 3);
     Matrix Bd = Matrix(3, 1);
     Matrix Cd = Matrix(1, 3);
     Matrix x = Matrix(3, 1);
     Matrix y = Matrix(1, 1);
+    Matrix u_state = Matrix(2, 1);
 
-    const double OMEGA = 10;
-    double x_prev_down = 0.84147 * -0.3; //-sin(1rad)*omega*amplitude
-    double x_up = 0;
-    double x_down = 0;
-    double x_prev_up = 0.54*3; //cos(1)*amplitude
 public:
     const double TIME_STEP = 0.01;
     const double SIMULATION_TIME = 20;
@@ -371,6 +369,7 @@ public:
 /// Methods
 ///////////////////////////////////////////////////////////
 public:
+    /// Constructors and destructors
     ///////////////////////////////////////////////////////////
     Model() {
         double _In[] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
@@ -395,12 +394,17 @@ public:
         this->x = Matrix(3, 1, _x);
 
         this->y = Matrix(1, 1);
+
+        /// cos(1)*amplitude
+        /// -sin(1rad)*omega*amplitude
+        double _u_state[] = {0.54*3, 0.84147*-0.3};
+        this->u_state = Matrix(2, 1, _u_state);
     }
 
     ~Model() {
 
     }
-///////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
     
     double update(const double& input) {
         x = Ad*x + Bd*input;
@@ -412,15 +416,27 @@ public:
     }
 
     double control() {
-        double T = this->TIME_STEP;
+        /// Constants
+        ///////////////////////////////////////////////////////////
+        const double T = this->TIME_STEP;
 
-        x_up = x_prev_up + T * (x_prev_down / (T * T * OMEGA * OMEGA + 1) - T * OMEGA * OMEGA * x_prev_up / (T * T * OMEGA * OMEGA + 1));
-        x_down = x_prev_down - T * OMEGA * OMEGA * (x_prev_up / (T * T * OMEGA * OMEGA + 1) + T * x_prev_down / (T * T * OMEGA * OMEGA + 1));
-    
-        x_prev_down = x_down;
-        x_prev_up = x_up;
+        const double _In[] = {1, 0, 0, 1};
+        const Matrix In(2, 2, _In);
 
-        double signal = x_up;
+        const double _u_A[] = {0, -1, OMEGA*OMEGA, 0};
+        const Matrix u_A = Matrix(2, 2, _u_A);
+        ///////////////////////////////////////////////////////////
+
+        Matrix mat_exp = Matrix(2, 1);
+        Matrix u = Matrix(2, 1);
+
+        mat_exp = (In + u_A*T).inverse()*this->u_state;
+        Matrix c = u_A*mat_exp*T;
+        u = this->u_state - u_A*mat_exp*T;
+
+        this->u_state = u;
+
+        double signal = u.getM();
 
         return signal;
     }
