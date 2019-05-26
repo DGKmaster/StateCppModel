@@ -2,7 +2,7 @@
 # Project created by QtCreator 2018-01-29T10:01:13
 #-------------------------------------------------
 
-QT += core gui
+QT += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 

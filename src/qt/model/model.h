@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <inttypes.h>
+#include <QSerialPort>
+#include <sstream>
 
 class Matrix {
     private:
@@ -353,13 +355,17 @@ class Model
 ///////////////////////////////////////////////////////////
 private:
     const double OMEGA = 10;
-    
+    const QString SERIAL_PORT_NAME = "/dev/pts/11";
+    const int SERIAL_PORT_BAUD_RATE = QSerialPort::Baud115200;
+
     Matrix Ad = Matrix(3, 3);
     Matrix Bd = Matrix(3, 1);
     Matrix Cd = Matrix(1, 3);
     Matrix x = Matrix(3, 1);
     Matrix y = Matrix(1, 1);
     Matrix u_state = Matrix(2, 1);
+
+    QSerialPort serial_port;
 
 public:
     const double TIME_STEP = 0.01;
@@ -372,6 +378,7 @@ public:
     /// Constructors and destructors
     ///////////////////////////////////////////////////////////
     Model() {
+        ///////////////////////////////////////////////////////////
         double _In[] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
         Matrix In(3, 3, _In);
 
@@ -399,13 +406,37 @@ public:
         /// -sin(1rad)*omega*amplitude
         double _u_state[] = {0.54*3, 0.84147*-0.3};
         this->u_state = Matrix(2, 1, _u_state);
+        ///////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////
+        this->serial_port.setPortName(this->SERIAL_PORT_NAME);
+        this->serial_port.setBaudRate(this->SERIAL_PORT_BAUD_RATE);
+
+        if (!serial_port.open(QIODevice::WriteOnly)) {
+            std::cout << "Can not open port" << std::endl;
+        }
+        ///////////////////////////////////////////////////////////
     }
 
     ~Model() {
-
+        serial_port.close();
     }
     ///////////////////////////////////////////////////////////
-    
+    void send(const double& value) {
+        std::stringstream os;
+        os << value;
+        QByteArray write_data(os.str().c_str());
+        qint64 bytes_written = serial_port.write(write_data);
+
+        if (bytes_written == -1) {
+            std::cout << "Failed to write the data" << std::endl;
+        } else if (bytes_written != write_data.size()) {
+            std::cout << "Failed to write all the data" << std::endl;
+        } else if (!serial_port.waitForBytesWritten(5000)) {
+            std::cout << "Operation timed out or an error" << std::endl;  
+        }
+    }
+
     double update(const double& input) {
         x = Ad*x + Bd*input;
         y = Cd*x;
