@@ -1,7 +1,7 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 // --------------------------
 // Set stop time here
@@ -47,7 +47,7 @@ Widget::Widget(QWidget *parent) :
     // --------------------------
     // Create the object here
     // --------------------------
-    object = new Model(2.0);   // <=
+    object = new Model();   // <=
     // --------------------------
     // Create the object here
     // --------------------------
@@ -116,7 +116,8 @@ void Widget::makePlot() {
     // --------------------------
     // Replace input signal with ours
     // --------------------------
-    double signal = std::sin(tmp/1000);
+    // double signal = std::sin(tmp/1000);
+    double signal = 1;
     // --------------------------
     // Replace input signal with ours
     // --------------------------
