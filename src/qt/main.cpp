@@ -1,6 +1,6 @@
 #include "dep/qcustomplot.h"
 #include "view/widget.h"
-#include "math.h"
+#include <cmath>
 
 #include <QApplication>
 

@@ -109,7 +109,6 @@ class Matrix {
 
             Matrix matrix_out(N, M);
 
-            /// Multiplying matrix a and b and storing in array
             for(uint16_t i = 0; i < N; i++) {
                 for(uint16_t j = 0; j < M; j++) {
                     matrix_out.mx[i*M + j] = this->mx[i*M + j] + matrix.mx[i*M + j];
@@ -326,20 +325,49 @@ class Matrix {
 
 class Model
 {
-
 private:
-    double gain_value;
+    double time = 0;
+    double time_step = 0.01;
+    double simulation_time = 5;
+
+    Matrix A;
+    Matrix B;
+    Matrix C;
+    Matrix x;
+    Matrix y;
 
 public:
-    Model(double gainValue) {
-        this->gain_value = gainValue;
+    ///////////////////////////////////////////////////////////
+    Model() {
+        double _A[] = {0, 1, 0, 0, 0, 1, -1.5, -5, -2};
+        Matrix A(3, 3, _A);
+
+        double _B[] = {0, 0, 1};
+        Matrix B(3, 1, _B);
+
+        double _C[] = {0.5, 0, 0};
+        Matrix C(1, 3, _C);
+
+        double _x[] = {0.5, 1, 1.5};
+        Matrix x(3, 1, _x);
+
+        Matrix y(1, 1);
     }
 
-    double getValue() const {
-        return this->gain_value;
+    ~Model() {
+
     }
+    ///////////////////////////////////////////////////////////
+    
     double update(double input) {
-        return input*(this->getValue());
+        // x = A*x + B*input;
+        // y = C*x;
+
+        // double output = y.getM();
+        
+        // return output;
+
+        return 1.0;
     }
 };
 #endif // MODEL_H
