@@ -212,7 +212,7 @@ class Matrix {
         * @param q
         * @param n
          */
-        Matrix getCofactor(const int16_t& p, const int16_t& q, const int16_t& n) {
+        Matrix getCofactor(const uint16_t& p, const uint16_t& q, const int16_t& n) {
             const uint16_t N = this->num_rows;
 
             Matrix matrix_out(N, N);
@@ -349,52 +349,81 @@ class Matrix {
 
 class Model
 {
+/// Attributes
+///////////////////////////////////////////////////////////
 private:
-    double time = 0;
-    double time_step = 0.01;
-    double simulation_time = 5;
-
-    Matrix A = Matrix(3, 3);
-    Matrix B = Matrix(3, 1);
-    Matrix C = Matrix(1, 3);
+    Matrix Ad = Matrix(3, 3);
+    Matrix Bd = Matrix(3, 1);
+    Matrix Cd = Matrix(1, 3);
     Matrix x = Matrix(3, 1);
     Matrix y = Matrix(1, 1);
 
+    const double OMEGA = 10;
+    double x_prev_down = 0.84147 * -0.3; //-sin(1rad)*omega*amplitude
+    double x_up = 0;
+    double x_down = 0;
+    double x_prev_up = 0.54*3; //cos(1)*amplitude
+public:
+    const double TIME_STEP = 0.01;
+    const double SIMULATION_TIME = 20;
+///////////////////////////////////////////////////////////
+
+/// Methods
+///////////////////////////////////////////////////////////
 public:
     ///////////////////////////////////////////////////////////
     Model() {
-        // double _A[] = {0, 1, 0, 0, 0, 1, -1.5, -5, -2};
-        double _A[] = {0, 1, 0, 0, 0, 1, -0.2, -1, -1};
-        this->A = Matrix(3, 3, _A);
+        double _In[] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+        Matrix In(3, 3, _In);
+
+        // double _A[] = {0, 1, 0, 0, 0, 1, -0.2, -1, -1};
+        double _A[] = {0, 1, 0, 0, 0, 1, -1.5, -5, -2};
+        Matrix A = Matrix(3, 3, _A);
+        this->Ad = A;
+        // this->Ad = A.expm();
 
         double _B[] = {0, 0, 1};
-        this->B = Matrix(3, 1, _B);
+        Matrix B = Matrix(3, 1, _B);
+        this->Bd = A.inverse()*(Ad - In)*B;
 
-        // double _C[] = {0.5, 0, 0};
-        double _C[] = {2, 1, 0};
-        this->C = Matrix(1, 3, _C);
+        // double _C[] = {2, 1, 0};
+        double _C[] = {0.5, 0, 0};
+        Matrix C = Matrix(1, 3, _C);
+        this->Cd = C;
 
         double _x[] = {0, 0, 0};
         this->x = Matrix(3, 1, _x);
 
         this->y = Matrix(1, 1);
-        // x.show();
     }
 
     ~Model() {
 
     }
-    ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
     
-    double update(double input) {
-        x = A*x + B*input;
-        y = C*x;
+    double update(const double& input) {
+        x = Ad*x + Bd*input;
+        y = Cd*x;
 
         double output = this->y.getM();
 
         return output;
-
-        // return 1.0;
     }
+
+    double control() {
+        double T = this->TIME_STEP;
+
+        x_up = x_prev_up + T * (x_prev_down / (T * T * OMEGA * OMEGA + 1) - T * OMEGA * OMEGA * x_prev_up / (T * T * OMEGA * OMEGA + 1));
+        x_down = x_prev_down - T * OMEGA * OMEGA * (x_prev_up / (T * T * OMEGA * OMEGA + 1) + T * x_prev_down / (T * T * OMEGA * OMEGA + 1));
+    
+        x_prev_down = x_down;
+        x_prev_up = x_up;
+
+        double signal = x_up;
+
+        return signal;
+    }
+///////////////////////////////////////////////////////////
 };
 #endif // MODEL_H

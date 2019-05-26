@@ -3,18 +3,18 @@
 #include <iostream>
 #include <cmath>
 
-// --------------------------
-// Set stop time here
-// --------------------------
-#define ENDOFTIME 50
-// --------------------------
-// Set stop time here
-// --------------------------
-
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
 {
+    // --------------------------
+    // Create the object here
+    // --------------------------
+    object = new Model();   // <=
+    // --------------------------
+    // Create the object here
+    // --------------------------
+
     ui->setupUi(this);
 
     // Set window size
@@ -39,18 +39,10 @@ Widget::Widget(QWidget *parent) :
     // Change ranges if you need
     // --------------------------
     // Set axes ranges so see all data:
-    inputPlot->xAxis->setRange(0, ENDOFTIME);
+    inputPlot->xAxis->setRange(0, object->SIMULATION_TIME);
     inputPlot->yAxis->setRange(-3, 3);
-    outputPlot->xAxis->setRange(0, ENDOFTIME);
+    outputPlot->xAxis->setRange(0, object->SIMULATION_TIME);
     outputPlot->yAxis->setRange(-3, 3);
-
-    // --------------------------
-    // Create the object here
-    // --------------------------
-    object = new Model();   // <=
-    // --------------------------
-    // Create the object here
-    // --------------------------
 
     // Get time in msec
     // --------------------------
@@ -58,7 +50,7 @@ Widget::Widget(QWidget *parent) :
     // --------------------------
 #ifdef __linux__
     struct timeval tmpStruct;
-    gettimeofday(&tmpStruct, NULL);
+    gettimeofday(&tmpStruct, nullptr);
     startTime = tmpStruct.tv_sec * 1000 + tmpStruct.tv_usec / 1000 + 0.5;
 #endif
 #ifdef _WIN32
@@ -74,7 +66,7 @@ Widget::Widget(QWidget *parent) :
     // --------------------------
     // Set sampling time here
     // --------------------------
-    timer->start(0.001);
+    timer->start(object->TIME_STEP);
     // --------------------------
     // Set sampling time here
     // --------------------------
@@ -98,13 +90,10 @@ Widget::~Widget()
 }
 
 void Widget::makePlot() {
-
-    // generate some data:
-
-
+// generate some data:
 #ifdef __linux__
     struct timeval tmpTime;
-    gettimeofday(&tmpTime, NULL);
+    gettimeofday(&tmpTime, nullptr);
     double tmp = (tmpTime.tv_sec * 1000 + tmpTime.tv_usec / 1000 + 0.5)-startTime;
 #endif
 #ifdef _WIN32
@@ -117,6 +106,7 @@ void Widget::makePlot() {
     // Replace input signal with ours
     // --------------------------
     // double signal = std::sin(tmp/1000);
+    // double signal = object->control();
     double signal = 1;
     // --------------------------
     // Replace input signal with ours
@@ -151,5 +141,5 @@ void Widget::makePlot() {
     inputPlot->replot();
     outputPlot->replot();
 
-    if (tmp/1000 > ENDOFTIME) {timer->stop();}
+    if (tmp/1000 > object->SIMULATION_TIME) {timer->stop();}
 }
