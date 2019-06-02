@@ -1,84 +1,107 @@
-\documentclass{article}
+\documentclass[14pt,a4paper]{extreport}
 
+\usepackage[left=30mm, top=20mm, right=10mm, bottom=20mm]{geometry}
+\usepackage{cmap}		
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{framed}
+\usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{indentfirst}
+\usepackage{textcomp}
+\usepackage{titlesec}
+\usepackage{alltt}
+
+\titleformat{\chapter}[display]
+    {\filcenter\large\bfseries}
+    {\MakeUppercase{\chaptertitlename} \thechapter}
+    {8pt}
+    {\bfseries}{}
+\titleformat{\section}
+    {\normalsize\bfseries}
+    {\thesection}
+    {1em}{}
+\titleformat{\subsection}
+    {\normalsize\bfseries}
+    {\thesubsection}
+    {1em}{}
+
+% Настройка вертикальных и горизонтальных отступов
+\titlespacing*{\chapter}{0pt}{-30pt}{8pt}
+\titlespacing*{\section}{\parindent}{*4}{*4}
+\titlespacing*{\subsection}{\parindent}{*4}{*4}
+\usepackage{color}
+\usepackage{cite}
+
+% отступ от левого края
+\oddsidemargin=0pt 
+
+\lstdefinestyle{customc}{belowcaptionskip=1\baselineskip,breaklines=true,frame=L,xleftmargin=\parindent,  language=C, showstringspaces=false, basicstyle=\footnotesize\ttfamily,keywordstyle=\bfseries\color{green!40!black},  commentstyle=\itshape\color{purple!40!black}, identifierstyle=\color{blue}, stringstyle=\color{orange},numbers=left,numbersep=12pt, numberstyle=\small\color{mygray},}
+\lstset{escapechar=@,style=customc}
+\usepackage{url}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
 \begin{document}
 
-\title{Introduction to \LaTeX{}}
-\author{Author's Name}
+\input{title.tex}
 
-\maketitle
+\newpage
 
-\begin{abstract}
-This is abstract: This simple document shows very basic features of
-\LaTeX{}.
-\end{abstract}
+\begin{alltt}
+\begin{verbatim}
+double control() {
+    /// Constants
 
+    const double tT = this->TIME_STEP;
 
-\section{Introduction}
+    const double _In[] = {1, 0, 0, 1};
+    const Matrix In(2, 2, _In);
 
-Here is the text of your introduction. We use some Latin nonsense text to fill
-the paragraphs. This way the resulting document will look more like an actual
-scientific paper or so. Here is an equation:
-
-\begin{equation}
-    \label{simple_equation}
-    \alpha = \sqrt{ \beta }
-\end{equation}
-
-Now you don't need to read the text any further because it's just Lorem ipsum.
-
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit
-amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
-et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-officia deserunt mollit anim id est laborum.
-
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+    const double _u_A[] = {0, -1, OMEGA*OMEGA, 0};
+    const Matrix u_A = Matrix(2, 2, _u_A);
 
 
-\subsection{Subsection Heading Here}
+    Matrix mat_exp = Matrix(2, 1);
+    Matrix u = Matrix(2, 1);
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+    mat_exp = (In + u_A*T).inverse()*this->u_state;
+    Matrix c = u_A*mat_exp*T;
+    u = this->u_state - u_A*mat_exp*T;
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+    this->u_state = u;
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+    double signal = u.getM();
 
-\section{Conclusion}
+    return signal;
+}
+\end{verbatim}
+\end{alltt}
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur.
+\newpage
+\chapter*{Введение}
+\addcontentsline{toc}{chapter}{Введение}
 
+Текст.
+
+\begin{enumerate}
+    \item {\bfseries Перечисление.}
+    
+    Текст.
+    \item {\bfseries Перечисление.}
+    
+    Текст.
+    \item {\bfseries Перечисление.}
+    
+    Текст.
+\end{enumerate}
+
+\chapter*{Заключение}
+\addcontentsline{toc}{chapter}{Заключение}
+
+Текст.
 
 \end{document}
