@@ -3,7 +3,7 @@
 \usepackage[left=30mm, top=20mm, right=10mm, bottom=20mm]{geometry}
 \usepackage{cmap}		
 \usepackage[utf8]{inputenc}
-\usepackage[english,russian]{babel}
+\usepackage[english, russian]{babel}
 \usepackage{framed}
 \usepackage{amsmath}
 \usepackage{graphicx}
@@ -14,6 +14,10 @@
 \usepackage{textcomp}
 \usepackage{titlesec}
 \usepackage{alltt}
+
+\usepackage{cite}
+\usepackage{url}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \titleformat{\chapter}[display]
     {\filcenter\large\bfseries}
@@ -29,27 +33,113 @@
     {\thesubsection}
     {1em}{}
 
-% Настройка вертикальных и горизонтальных отступов
+%% Настройка вертикальных и горизонтальных отступов
 \titlespacing*{\chapter}{0pt}{-30pt}{8pt}
 \titlespacing*{\section}{\parindent}{*4}{*4}
 \titlespacing*{\subsection}{\parindent}{*4}{*4}
-\usepackage{color}
-\usepackage{cite}
 
-% отступ от левого края
+%% Отступ от левого края
 \oddsidemargin=0pt 
 
 \lstdefinestyle{customc}{belowcaptionskip=1\baselineskip,breaklines=true,frame=L,xleftmargin=\parindent,  language=C, showstringspaces=false, basicstyle=\footnotesize\ttfamily,keywordstyle=\bfseries\color{green!40!black},  commentstyle=\itshape\color{purple!40!black}, identifierstyle=\color{blue}, stringstyle=\color{orange},numbers=left,numbersep=12pt, numberstyle=\small\color{mygray},}
 \lstset{escapechar=@,style=customc}
-\usepackage{url}
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
 \begin{document}
 
+%% Титульный
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{title.tex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% Оглавление
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
+\tableofcontents
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%% Исходные данные
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\chapter*{Исходные данные}
+\addcontentsline{toc}{chapter}{Исходные данные}
+
+Текст.
+
+\begin{equation}
+    u(t) = 3 \cdot  cos(0.1 \cdot t + 1)
+\end{equation}
+
+\begin{equation}
+    A = 
+    \begin{vmatrix} 
+        0 & 1 & 0 \\ 
+        0 & 0 & 1 \\
+        -1.5 & -5 & -2
+    \end{vmatrix}
+\end{equation}
+
+\begin{equation}
+    B = 
+    \begin{vmatrix} 
+        0 \\ 
+        0 \\
+        1
+    \end{vmatrix}
+\end{equation}
+
+\begin{equation}
+    C = 
+    \begin{vmatrix} 
+        0.5 & 0 & 0
+    \end{vmatrix}
+\end{equation}
+
+\begin{equation}
+\dot x = A \cdot x + B \cdot u(t)
+\end{equation}
+
+\begin{equation}
+y = C \cdot x
+\end{equation}
+
+\begin{enumerate}
+    \item {\bfseries Перечисление.}
+    
+    Текст.
+    \item {\bfseries Перечисление.}
+    
+    Текст.
+    \item {\bfseries Перечисление.}
+    
+    Текст.
+\end{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Код
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter*{Вывод}
+\addcontentsline{toc}{chapter}{Вывод}
+
+Текст.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Приложение А. Исходный код программы
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\chapter*{Приложение А. Исходный код программы}
+\addcontentsline{toc}{chapter}{Приложение А. Исходный код программы}
 
 \begin{alltt}
 \begin{verbatim}
@@ -80,28 +170,6 @@ double control() {
 }
 \end{verbatim}
 \end{alltt}
-
-\newpage
-\chapter*{Введение}
-\addcontentsline{toc}{chapter}{Введение}
-
-Текст.
-
-\begin{enumerate}
-    \item {\bfseries Перечисление.}
-    
-    Текст.
-    \item {\bfseries Перечисление.}
-    
-    Текст.
-    \item {\bfseries Перечисление.}
-    
-    Текст.
-\end{enumerate}
-
-\chapter*{Заключение}
-\addcontentsline{toc}{chapter}{Заключение}
-
-Текст.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \end{document}
