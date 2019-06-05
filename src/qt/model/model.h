@@ -349,12 +349,31 @@ class Matrix {
         ///////////////////////////////////////////////////////////
 };
 
+
+class Integrator {
+public:
+    Integrator(double init): state(init) {}
+
+	void update(double input, double dt) {
+        this->state += (input - prev_in) * dt * 1000 / 2;
+        this->prev_in = input;
+	}
+
+	double getState() {
+		return this->state;
+	}
+
+private:
+	double state;
+	double prev_in = 0;
+};
+
 class Model
 {
 /// Attributes
 ///////////////////////////////////////////////////////////
 private:
-    const double OMEGA = 10;
+    const double OMEGA = 0.1;
     const QString SERIAL_PORT_NAME = "/dev/pts/11";
     const int SERIAL_PORT_BAUD_RATE = QSerialPort::Baud115200;
 
@@ -365,11 +384,15 @@ private:
     Matrix y = Matrix(1, 1);
     Matrix u_state = Matrix(2, 1);
 
+    Integrator _du_state = Integrator(0.84147 * -0.3);
+    Integrator _u_state = Integrator(0.54 * 3);
+
     QSerialPort serial_port;
 
 public:
     const double TIME_STEP = 0.01;
     const double SIMULATION_TIME = 20;
+
 ///////////////////////////////////////////////////////////
 
 /// Methods
@@ -412,9 +435,9 @@ public:
         this->serial_port.setPortName(this->SERIAL_PORT_NAME);
         this->serial_port.setBaudRate(this->SERIAL_PORT_BAUD_RATE);
 
-        if (!serial_port.open(QIODevice::WriteOnly)) {
-            std::cout << "Can not open port" << std::endl;
-        }
+        // if (!serial_port.open(QIODevice::WriteOnly)) {
+        //     std::cout << "Can not open port" << std::endl;
+        // }
         ///////////////////////////////////////////////////////////
     }
 
@@ -461,13 +484,25 @@ public:
         Matrix mat_exp = Matrix(2, 1);
         Matrix u = Matrix(2, 1);
 
-        mat_exp = (In + u_A*T).inverse()*this->u_state;
-        Matrix c = u_A*mat_exp*T;
-        u = this->u_state - u_A*mat_exp*T;
-
-        this->u_state = u;
-
-        double signal = u.getM();
+        /// Old method
+        ///////////////////////////////////////////////////////////
+        // mat_exp = (In + u_A*T).inverse()*this->u_state;
+        //Matrix c = u_A*mat_exp*T;
+        //u = this->u_state - (u_A*mat_exp)*T;
+        //this->u_state = u;
+		
+        //double signal = u.getM();
+        ///////////////////////////////////////////////////////////
+        
+        /// New method
+        ///////////////////////////////////////////////////////////
+		double feedback = OMEGA*OMEGA*_u_state.getState();
+        
+        this->_du_state.update(feedback, T);
+		this->_u_state.update(_du_state.getState(), T);
+		
+		double signal = _u_state.getState();
+        ///////////////////////////////////////////////////////////
 
         return signal;
     }

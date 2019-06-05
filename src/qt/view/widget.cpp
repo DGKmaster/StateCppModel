@@ -107,8 +107,8 @@ void Widget::makePlot() {
     // --------------------------
     // double signal = std::sin(tmp/1000);
     double signal = object->control();
-    object->send(signal);
     // double signal = 1;
+    // object->send(signal);
     // --------------------------
     // Replace input signal with ours
     // --------------------------
