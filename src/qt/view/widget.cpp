@@ -26,8 +26,8 @@ Widget::Widget(QWidget *parent) :
     outputPlot = new QCustomPlot(this);
     mainlayout->addWidget(inputPlot,0,0);
     mainlayout->addWidget(outputPlot,0,1);
-    inputPlot->setFixedSize(this->width()/3,this->height());
-    outputPlot->setFixedSize(this->width()/3,this->height());
+    inputPlot->setFixedSize(this->width()/2,this->height());
+    outputPlot->setFixedSize(this->width()/2,this->height());
 
     // Give the axes some labels:
     inputPlot->xAxis->setLabel("t");
@@ -42,7 +42,7 @@ Widget::Widget(QWidget *parent) :
     inputPlot->xAxis->setRange(0, object->SIMULATION_TIME);
     inputPlot->yAxis->setRange(-3, 3);
     outputPlot->xAxis->setRange(0, object->SIMULATION_TIME);
-    outputPlot->yAxis->setRange(-3, 3);
+    outputPlot->yAxis->setRange(-1, 1);
 
     // Get time in msec
     // --------------------------

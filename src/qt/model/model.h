@@ -30,14 +30,17 @@ private:
 	Matrix x_prev = Matrix(3, 1);
     Matrix u_state = Matrix(2, 1);
 
-    Integrator _du_state = Integrator(-3*OMEGA*std::sin(1), 0);
-    Integrator _u_state = Integrator(3 * std::cos(1), 0);
+    Integrator _du_state = Integrator(-3 * OMEGA * 0.84147, 0);
+    Integrator _u_state = Integrator(3 * 0.54030, 0);
 	double feedback;
 
     QSerialPort serial_port;
 
 public:
-    const double TIME_STEP = 0.1;
+    /// 0.2 -> 5 Hz
+    /// 0.02 -> 50 Hz
+    /// 0.01 -> 100 Hz
+    const double TIME_STEP = 0.02;
     const double SIMULATION_TIME = 100;
     double time_now = 0;
 
