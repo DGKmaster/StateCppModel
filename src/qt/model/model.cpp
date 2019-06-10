@@ -34,7 +34,9 @@ Model::Model() {
     ///////////////////////////////////////////////////////////
     this->serial_port.setPortName(this->SERIAL_PORT_NAME);
     this->serial_port.setBaudRate(this->SERIAL_PORT_BAUD_RATE);
-
+    this->serial_port.setDataBits(this->DATA_BITS);
+    this->serial_port.setParity(this->PARITY);
+    this->serial_port.setStopBits(this->STOP_BITS);
     // if (!serial_port.open(QIODevice::WriteOnly)) {
     //     std::cout << "Can not open port" << std::endl;
     // }

@@ -15,8 +15,12 @@ class Model
 ///////////////////////////////////////////////////////////
 private:
     const double OMEGA = 0.1;
+
     const QString SERIAL_PORT_NAME = "/dev/pts/11";
     const int SERIAL_PORT_BAUD_RATE = QSerialPort::Baud115200;
+    const QSerialPort::DataBits DATA_BITS = QSerialPort::Data8;
+    const QSerialPort::Parity PARITY = QSerialPort::NoParity;
+    const QSerialPort::StopBits STOP_BITS = QSerialPort::OneStop;
 
     Matrix Ad = Matrix(3, 3);
     Matrix Bd = Matrix(3, 1);
