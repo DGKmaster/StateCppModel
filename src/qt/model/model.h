@@ -390,8 +390,9 @@ private:
     QSerialPort serial_port;
 
 public:
-    const double TIME_STEP = 0.01;
+    const double TIME_STEP = 0.1;
     const double SIMULATION_TIME = 20;
+    double time_now = 0;
 
 ///////////////////////////////////////////////////////////
 
@@ -484,16 +485,6 @@ public:
         Matrix mat_exp = Matrix(2, 1);
         Matrix u = Matrix(2, 1);
 
-        /// Old method
-        ///////////////////////////////////////////////////////////
-        // mat_exp = (In + u_A*T).inverse()*this->u_state;
-        //Matrix c = u_A*mat_exp*T;
-        //u = this->u_state - (u_A*mat_exp)*T;
-        //this->u_state = u;
-		
-        //double signal = u.getM();
-        ///////////////////////////////////////////////////////////
-        
         /// New method
         ///////////////////////////////////////////////////////////
 		double feedback = OMEGA*OMEGA*_u_state.getState();

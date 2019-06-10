@@ -122,8 +122,11 @@ void Widget::makePlot() {
     } else {
         dt = tmp / 1000.0 - time.last();
     }
+
+    object->time_now += object->TIME_STEP;
+
     // Update time array to plot
-    time.append(tmp/1000);
+    time.append(object->time_now);
 
     // --------------------------
     // Update the object here
@@ -142,5 +145,5 @@ void Widget::makePlot() {
     inputPlot->replot();
     outputPlot->replot();
 
-    if (tmp/1000 > object->SIMULATION_TIME) {timer->stop();}
+    if (object->time_now > object->SIMULATION_TIME) {timer->stop();}
 }
