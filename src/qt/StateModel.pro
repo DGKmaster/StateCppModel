@@ -24,12 +24,16 @@ SOURCES += \
     main.cpp \
     view/widget.cpp \
     dep/qcustomplot.cpp \
-    model/model.cpp
+    model/model.cpp \
+    model/matrix.cpp \
+    model/integrator.cpp
 
 HEADERS += \
     view/widget.h \
     dep/qcustomplot.h \
-    model/model.h
+    model/model.h \
+    model/matrix.h \
+    model/integrator.h
 
 FORMS += \
     view/widget.ui
