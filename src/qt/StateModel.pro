@@ -33,7 +33,8 @@ HEADERS += \
     dep/qcustomplot.h \
     model/model.h \
     model/matrix.h \
-    model/integrator.h
+    model/integrator.h \
+    model/cobs.h
 
 FORMS += \
     view/widget.ui

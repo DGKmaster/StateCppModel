@@ -63,9 +63,9 @@ void Model::send(const double& value) {
 }
 
 double Model::update(const double& input) {
-    x_prev = x;
-    x = Ad*x + Bd*input;
-    y = Cd*x_prev;
+    this->x_prev = this->x;
+    this->x = this->Ad*x + this->Bd*input;
+    this->y = this->Cd*this->x_prev;
 
     double output = this->y.getM();
 
