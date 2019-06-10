@@ -78,10 +78,10 @@
 \item
 Программно реализовать отдельными классами четыре случая объектов 
 (непрерывный и три дискретных). Для дискретных случаев сделать 
-реализацию с использованием разностных уравнений 
+реализацию с использованием разностных уравнений.
 \begin{equation} 
     x_{k+1} = A \cdot x_k
-\end{equation}.
+\end{equation}
 То есть интегратор заменяется на элемент памяти.
 
 \item 
@@ -99,8 +99,9 @@
 
 \item 
 Закодировать с помощью метода COBS значения, полученные с выхода
-объекта в следующем формате: 0x0A 0xXX 0xXX 0xXX 0xXX 0xCR,
-где 0xXX – байты полученного числа с плавающей точкой (float) в
+объекта в следующем формате:
+{[0x0A 0xXX 0xXX 0xXX 0xXX 0xCR]}, где 0xXX – байты полученного 
+числа с плавающей точкой (float) в
 обратном порядке, а 0xCR – проверочная сумма, равная сумме всех
 остальных байт сообщения, вычтенной из 0xFF.
 
@@ -156,6 +157,7 @@ y = C \cdot x
 \chapter*{Ход работы}
 \addcontentsline{toc}{chapter}{Ход работы}
 
+Рисунок 1 - Блок-схема работы программы
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Приложение А. Исходный код программы
@@ -164,32 +166,254 @@ y = C \cdot x
 \chapter*{Приложение А. Исходный код программы}
 \addcontentsline{toc}{chapter}{Приложение А. Исходный код программы}
 
+
+\textbf{Файл model.cpp}
 \begin{alltt}
 \begin{verbatim}
-double control() {
-    /// Constants
+#include "model.h"
 
-    const double tT = this->TIME_STEP;
+\end{verbatim}
+\end{alltt}
 
-    const double _In[] = {1, 0, 0, 1};
-    const Matrix In(2, 2, _In);
+\textbf{Файл model.h}
+\begin{alltt}
+\begin{verbatim}
+#include "model.h"
 
-    const double _u_A[] = {0, -1, OMEGA*OMEGA, 0};
-    const Matrix u_A = Matrix(2, 2, _u_A);
+\end{verbatim}
+\end{alltt}
+
+\textbf{Файл main.cpp}
+\begin{alltt}
+\begin{verbatim}
+#include "dep/qcustomplot.h"
+#include "view/widget.h"
+#include <cmath>
+
+#include <QApplication>
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    Widget w;
+    w.show();
+
+    return a.exec();
+}    
+\end{verbatim}
+\end{alltt}
 
 
-    Matrix mat_exp = Matrix(2, 1);
-    Matrix u = Matrix(2, 1);
+\textbf{Файл widget.h}
+\begin{alltt}
+\begin{verbatim}
+#ifndef WIDGET_H
+#define WIDGET_H
 
-    mat_exp = (In + u_A*T).inverse()*this->u_state;
-    Matrix c = u_A*mat_exp*T;
-    u = this->u_state - u_A*mat_exp*T;
+#include <QWidget>
+#include <QTimer>
+#include <QVector>
 
-    this->u_state = u;
+#ifdef __linux__
+#include <sys/time.h>
+#endif
 
-    double signal = u.getM();
+#include "dep/qcustomplot.h"
+#include "model/model.h"
 
-    return signal;
+namespace Ui {
+class Widget;
+}
+
+class Widget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit Widget(QWidget *parent = nullptr);
+    ~Widget();
+
+public slots:
+    void makePlot();
+
+private:
+    Ui::Widget *ui;
+    QGridLayout *mainlayout;
+    QCustomPlot *inputPlot;
+    QCustomPlot *outputPlot;
+
+    double startTime;
+    double dt;
+
+    QTimer *timer;
+    QVector<double> time;
+    QVector<double> input;
+    QVector<double> output;
+
+    // --------------------------
+    // Add pointer to the object here
+    // --------------------------
+    Model *object;   // <=
+    // --------------------------
+    // Add pointer to the object here
+    // --------------------------
+};
+
+#endif // WIDGET_H
+\end{verbatim}
+\end{alltt}
+
+\textbf{Файл widget.cpp}
+\begin{alltt}
+\begin{verbatim}
+#include "widget.h"
+#include "ui_widget.h"
+#include <iostream>
+#include <cmath>
+
+Widget::Widget(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::Widget)
+{
+    // --------------------------
+    // Create the object here
+    // --------------------------
+    object = new Model();   // <=
+    // --------------------------
+    // Create the object here
+    // --------------------------
+
+    ui->setupUi(this);
+
+    // Set window size
+    this->setFixedSize(1400,700);
+
+    // Add main layout with two plots
+    mainlayout = new QGridLayout(this);
+    inputPlot = new QCustomPlot(this);
+    outputPlot = new QCustomPlot(this);
+    mainlayout->addWidget(inputPlot,0,0);
+    mainlayout->addWidget(outputPlot,0,1);
+    inputPlot->setFixedSize(this->width()/3,this->height());
+    outputPlot->setFixedSize(this->width()/3,this->height());
+
+    // Give the axes some labels:
+    inputPlot->xAxis->setLabel("t");
+    inputPlot->yAxis->setLabel("input");
+    outputPlot->xAxis->setLabel("t");
+    outputPlot->yAxis->setLabel("output");
+
+    // --------------------------
+    // Change ranges if you need
+    // --------------------------
+    // Set axes ranges so see all data:
+    inputPlot->xAxis->setRange(0, object->SIMULATION_TIME);
+    inputPlot->yAxis->setRange(-3, 3);
+    outputPlot->xAxis->setRange(0, object->SIMULATION_TIME);
+    outputPlot->yAxis->setRange(-3, 3);
+
+    // Get time in msec
+    // --------------------------
+    // Google for MacOS timings
+    // --------------------------
+#ifdef __linux__
+    struct timeval tmpStruct;
+    gettimeofday(&tmpStruct, nullptr);
+    startTime = tmpStruct.tv_sec * 1000 + tmpStruct.tv_usec / 1000 + 0.5;
+#endif
+#ifdef _WIN32
+    SYSTEMTIME tmpStruct;
+    GetSystemTime(&tmpStruct);
+    startTime = tmpStruct.wSecond * 1000 + tmpStruct.wMilliseconds + 0.5;
+#endif
+
+    makePlot();
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(makePlot()));
+
+    // --------------------------
+    // Set sampling time here
+    // --------------------------
+    timer->start(object->TIME_STEP);
+    // --------------------------
+    // Set sampling time here
+    // --------------------------
+}
+
+Widget::~Widget()
+{
+    delete ui;
+    delete inputPlot;
+    delete outputPlot;
+    delete timer;
+    delete mainlayout;
+
+    // --------------------------
+    // Delete the object here
+    // --------------------------
+    delete object;
+    // --------------------------
+    // Delete the object here
+    // --------------------------
+}
+
+void Widget::makePlot() {
+// generate some data:
+#ifdef __linux__
+    struct timeval tmpTime;
+    gettimeofday(&tmpTime, nullptr);
+    double tmp = (tmpTime.tv_sec * 1000 + tmpTime.tv_usec / 1000 + 0.5)-startTime;
+#endif
+#ifdef _WIN32
+    SYSTEMTIME tmpTime;
+    GetSystemTime(&tmpTime);
+    double tmp = tmpTime.wSecond * 1000 + tmpTime.wMilliseconds + 0.5 - startTime;
+#endif
+
+    // --------------------------
+    // Replace input signal with ours
+    // --------------------------
+    // double signal = std::sin(tmp/1000);
+    double signal = object->control();
+    // double signal = 1;
+    // object->send(signal);
+    // --------------------------
+    // Replace input signal with ours
+    // --------------------------
+
+    // Update input array to plot
+    input.append(signal);
+
+    // Get elapsed time
+    if (time.empty()) {
+        dt = 0;
+    } else {
+        dt = tmp / 1000.0 - time.last();
+    }
+
+    object->time_now += object->TIME_STEP;
+
+    // Update time array to plot
+    time.append(object->time_now);
+
+    // --------------------------
+    // Update the object here
+    // --------------------------
+    output.append(object->update(signal));
+    // --------------------------
+    // Update the object here
+    // --------------------------
+
+    inputPlot->addGraph();
+    inputPlot->graph(0)->setData(time, input);
+
+    outputPlot->addGraph();
+    outputPlot->graph(0)->setData(time, output);
+
+    inputPlot->replot();
+    outputPlot->replot();
+
+    if (object->time_now > object->SIMULATION_TIME) {timer->stop();}
 }
 \end{verbatim}
 \end{alltt}
