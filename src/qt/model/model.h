@@ -8,6 +8,10 @@
 
 #include "matrix.h"
 #include "integrator.h"
+#include "cobs.h"
+
+#include <stdio.h>
+#include <string>
 
 class Model
 {
@@ -40,7 +44,7 @@ public:
     /// 0.2 -> 5 Hz
     /// 0.02 -> 50 Hz
     /// 0.01 -> 100 Hz
-    const double TIME_STEP = 0.02;
+    const double TIME_STEP = 0.1;
     const double SIMULATION_TIME = 100;
     double time_now = 0;
 

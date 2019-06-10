@@ -48,8 +48,21 @@ Model::~Model() {
 }
 
 void Model::send(const double& value) {
+    const uint LENGTH = 20;
+    char buffer_char[LENGTH];
+    uint8_t buffer_uint[LENGTH];
+
+    snprintf(buffer_char, LENGTH, "%A", value);
+
+    sscanf(buffer_char, "%p", &buffer_uint);
+
+	cobs::encode(buffer_uint, LENGTH, 1);
+
     std::stringstream os;
-    os << value;
+    os << buffer_uint;
+    
+    // std::cout << std::hex << buffer_uint << std::endl;
+    
     QByteArray write_data(os.str().c_str());
     qint64 bytes_written = serial_port.write(write_data);
 
