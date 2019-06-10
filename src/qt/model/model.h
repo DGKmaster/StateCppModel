@@ -304,12 +304,6 @@ class Matrix {
         Matrix adjoint() {
             const uint16_t N = this->num_rows;
 
-            //if (N == 1) {
-            //    double _out[] = {this->mx[0]};
-            //    Matrix out(1, 1, _out);
-            //    return out;
-            //}
-
             Matrix matrix_out(N, N);
 
             /// temp is used to store cofactors of A[][]
@@ -362,36 +356,7 @@ class Matrix {
             return matrix_out;
         }
 
-		Matrix MatExp(double dt) {
-
-			const uint16_t N = this->num_rows;
-			const uint16_t M = this->num_columns;
-			
-			double random_init[] = {1, 1, 1};
-			Matrix x_internal_init(N, 1, random_init);
-			Matrix x_internal_init_transpose(1, N, random_init);
-			Matrix x_internal(N, 1, random_init);
-
-			Matrix x_der1_internal_init(N, 1);
-			x_der1_internal_init = *this * x_internal;
-
-			Matrix x_der1_internal(N, 1);
-			x_der1_internal = x_der1_internal_init;
-
-			Matrix matrix_out(N, N);
-
-			for (uint16_t i = 0; i < N; i++) {
-				x_internal.mx[i] = x_internal.mx[i] + x_der1_internal.mx[i] * dt;
-			}
-
-			Matrix inverse_matrix_mult = x_internal_init * x_internal_init_transpose;
-			matrix_out = x_internal * x_internal_init_transpose * inverse_matrix_mult.inverse();
-			
-			return matrix_out;
-		}
-
-
-		Matrix MatExp_v2(double dt) {
+		Matrix matExp(double dt) {
 			const uint16_t N = this->num_rows;
 
 			double _matrix_out[] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
@@ -423,7 +388,10 @@ class Matrix {
 
 class Integrator {
 public:
-	Integrator(double init_state, double init_in) {state = init_state;  prev_in = init_in; }
+	Integrator(double init_state, double init_in): 
+        state(init_state),
+        prev_in(init_in)
+    {}
 
 	void update(double input, double dt) {
         this->state_prev = this->state;
@@ -481,21 +449,15 @@ public:
     /// Constructors and destructors
     ///////////////////////////////////////////////////////////
     Model() {
+        ///
         ///////////////////////////////////////////////////////////
         double _In[] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
         Matrix In(3, 3, _In);
 
-        // double _A[] = {0, 1, 0, 0, 0, 1, -0.2, -1, -1};
         double _A[] = {0, 1, 0, 0, 0, 1, -1.5, -5, -2};
         Matrix A = Matrix(3, 3, _A);
-		// matexp for TIME_STEP = 0.1
-		double _Ad_test[] = { 0.999762603520798,0.099202680178427,0.004663356472870, -0.006995034709305,0.976445821156447,0.089875967232687, -0.134813950849031,-0.456374870872741,0.796693886691073 };
-		Matrix Ad_test = Matrix(3, 3, _Ad_test);
-        
-        // this->Ad = Ad_test;
-        // this->Ad = A.MatExp(TIME_STEP);
-		this->Ad = A.MatExp_v2(TIME_STEP);
-        (this->Ad - Ad_test).show();
+
+		this->Ad = A.matExp(TIME_STEP);
 
         double _B[] = {0, 0, 1};
         Matrix B = Matrix(3, 1, _B);
@@ -515,7 +477,8 @@ public:
         double _u_state[] = {0.54*3, 0.84147*-0.3};
         this->u_state = Matrix(2, 1, _u_state);
         ///////////////////////////////////////////////////////////
-
+        
+        ///
         ///////////////////////////////////////////////////////////
         this->serial_port.setPortName(this->SERIAL_PORT_NAME);
         this->serial_port.setBaudRate(this->SERIAL_PORT_BAUD_RATE);
@@ -529,6 +492,9 @@ public:
     ~Model() {
         serial_port.close();
     }
+    ///////////////////////////////////////////////////////////
+
+    /// 
     ///////////////////////////////////////////////////////////
     void send(const double& value) {
         std::stringstream os;
@@ -567,11 +533,10 @@ public:
         const Matrix u_A = Matrix(2, 2, _u_A);
         ///////////////////////////////////////////////////////////
 
+        ///////////////////////////////////////////////////////////
         Matrix mat_exp = Matrix(2, 1);
         Matrix u = Matrix(2, 1);
         
-        /// New method
-        ///////////////////////////////////////////////////////////
 		double signal = _u_state.getState();
 	
         this->_du_state.update(feedback, T);
@@ -582,6 +547,6 @@ public:
 
         return signal;
     }
-///////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
 };
 #endif // MODEL_H
