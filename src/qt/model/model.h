@@ -120,6 +120,21 @@ class Matrix {
             return matrix_out;
         }
 
+        Matrix operator/(const double &value) const {
+            const uint16_t N = this->num_rows;
+            const uint16_t M = this->num_columns;
+
+            Matrix matrix_out(N, M);
+
+            for(uint16_t i = 0; i < N; i++) {
+                for(uint16_t j = 0; j < M; j++) {
+                    matrix_out.mx[i*M + j] = this->mx[i*M + j] / value;
+                }
+            }
+
+            return matrix_out;
+        }
+
         /**
          * @brief Element-wise sum
          * @param matrix Right operand
@@ -384,16 +399,20 @@ class Matrix {
 
 			Matrix A_power(N, N);
 			A_power = *this;
+			double dt_power = dt;
+			double factorial = 1;
             
-			double dt_power = 1;
-			double factorial = 2;
-			matrix_out = matrix_out + *this;
+            /// First step - just matrix_out
+            /// Second step - matrix_out + ...
+			matrix_out = matrix_out + (A_power * dt_power) / factorial;
 
-			for (uint16_t k = 0; k < 20; k++) {
+            /// Third step and following
+			for (uint16_t k = 2; k < 4; k++) {
 				A_power = A_power * *this;
 				dt_power = dt_power * dt;
-				matrix_out = matrix_out + (A_power * dt_power) * (1/factorial);
-				factorial = factorial * (k + 3);
+                factorial = factorial * k;
+
+				matrix_out = matrix_out + (A_power * dt_power) / factorial;
 			}
 
 			return matrix_out;
@@ -469,12 +488,11 @@ public:
         // double _A[] = {0, 1, 0, 0, 0, 1, -0.2, -1, -1};
         double _A[] = {0, 1, 0, 0, 0, 1, -1.5, -5, -2};
         Matrix A = Matrix(3, 3, _A);
-        //this->Ad = A;
 		// matexp for TIME_STEP = 0.1
 		double _Ad_test[] = { 0.999762603520798,0.099202680178427,0.004663356472870, -0.006995034709305,0.976445821156447,0.089875967232687, -0.134813950849031,-0.456374870872741,0.796693886691073 };
 		Matrix Ad_test = Matrix(3, 3, _Ad_test);
         
-        //this->Ad = Matrix(3, 3, _Ad);
+        // this->Ad = Ad_test;
         // this->Ad = A.MatExp(TIME_STEP);
 		this->Ad = A.MatExp_v2(TIME_STEP);
         (this->Ad - Ad_test).show();
