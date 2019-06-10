@@ -346,17 +346,56 @@ class Matrix {
 
             return matrix_out;
         }
+
+        Matrix MatExp(double dt) {
+
+			const uint16_t N = this->num_rows;
+			const uint16_t M = this->num_columns;
+			
+			double _x_internal_init[] = {1, 1, 1};
+			Matrix x_internal_init(N, 1, _x_internal_init);
+
+            double _x_internal_init_transpose[] = {1, 1, 1};
+			Matrix x_internal_init_transpose(1, N, _x_internal_init_transpose);
+
+            double _x_internal[] = {1, 1, 1};
+			Matrix x_internal(N, 1, _x_internal);
+
+			Matrix x_der1_internal_init(N, 1);
+			x_der1_internal_init = *this * x_internal;
+
+			Matrix x_der1_internal(N, 1);
+			x_der1_internal = x_der1_internal_init;
+
+			Matrix matrix_out(N, N);
+
+			for (uint16_t i = 0; i < N; i++) {
+				x_internal.mx[i] = x_internal.mx[i] + x_der1_internal.mx[i] * dt;
+			}
+
+			matrix_out = x_internal * x_internal_init_transpose;
+			
+			return matrix_out;
+		}
         ///////////////////////////////////////////////////////////
 };
 
 
 class Integrator {
 public:
-    Integrator(double init): state(init) {}
+    Integrator(double init_state, double init_in): 
+        state(init_state),
+        prev_in(init_in)
+        {}
 
 	void update(double input, double dt) {
-        this->state += (input - prev_in) * dt * 1000 / 2;
+        this->state_prev = this->state;
+        this->state = state_prev + (input + prev_in) * dt / 2;;
         this->prev_in = input;
+	}
+
+    double getState_prev() {
+		return this->state_prev;
 	}
 
 	double getState() {
@@ -365,6 +404,7 @@ public:
 
 private:
 	double state;
+    double state_prev;
 	double prev_in = 0;
 };
 
@@ -384,8 +424,8 @@ private:
     Matrix y = Matrix(1, 1);
     Matrix u_state = Matrix(2, 1);
 
-    Integrator _du_state = Integrator(0.84147 * -0.3);
-    Integrator _u_state = Integrator(0.54 * 3);
+    Integrator _du_state = Integrator(1.0, 0.0);
+    Integrator _u_state = Integrator(0.1, 1.0);
 
     QSerialPort serial_port;
 
@@ -393,6 +433,7 @@ public:
     const double TIME_STEP = 0.1;
     const double SIMULATION_TIME = 20;
     double time_now = 0;
+    double feedback;
 
 ///////////////////////////////////////////////////////////
 
@@ -406,17 +447,18 @@ public:
         double _In[] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
         Matrix In(3, 3, _In);
 
-        // double _A[] = {0, 1, 0, 0, 0, 1, -0.2, -1, -1};
         double _A[] = {0, 1, 0, 0, 0, 1, -1.5, -5, -2};
         Matrix A = Matrix(3, 3, _A);
-        this->Ad = A;
-        // this->Ad = A.expm();
+        Matrix A2 = Matrix(3, 3, _A);
+
+        double _Ad[] = {0.8700, 0.5288, 0.1917, -0.2876, -0.0886, 0.1454, -0.2181, -1.0145, -0.3793};
+        this->Ad = A.MatExp(TIME_STEP);
+        this->Ad.show();
 
         double _B[] = {0, 0, 1};
         Matrix B = Matrix(3, 1, _B);
         this->Bd = A.inverse()*(Ad - In)*B;
 
-        // double _C[] = {2, 1, 0};
         double _C[] = {0.5, 0, 0};
         Matrix C = Matrix(1, 3, _C);
         this->Cd = C;
@@ -487,12 +529,12 @@ public:
 
         /// New method
         ///////////////////////////////////////////////////////////
-		double feedback = OMEGA*OMEGA*_u_state.getState();
-        
+		double signal = _u_state.getState();
+
         this->_du_state.update(feedback, T);
 		this->_u_state.update(_du_state.getState(), T);
 		
-		double signal = _u_state.getState();
+		feedback = -OMEGA*OMEGA*_u_state.getState();
         ///////////////////////////////////////////////////////////
 
         return signal;
