@@ -37,9 +37,14 @@ Model::Model() {
     this->serial_port.setDataBits(this->DATA_BITS);
     this->serial_port.setParity(this->PARITY);
     this->serial_port.setStopBits(this->STOP_BITS);
-    // if (!serial_port.open(QIODevice::WriteOnly)) {
-    //     std::cout << "Can not open port" << std::endl;
-    // }
+
+    if (!serial_port.open(QIODevice::WriteOnly)) {
+        std::cout << "Can not open port" << std::endl;
+    }
+
+    this->send(42);
+
+    serial_port.close();
     ///////////////////////////////////////////////////////////
 }
 
@@ -59,9 +64,8 @@ void Model::send(const double& value) {
 	cobs::encode(buffer_uint, LENGTH, 1);
 
     std::stringstream os;
+    // os << value;
     os << buffer_uint;
-    
-    // std::cout << std::hex << buffer_uint << std::endl;
     
     QByteArray write_data(os.str().c_str());
     qint64 bytes_written = serial_port.write(write_data);

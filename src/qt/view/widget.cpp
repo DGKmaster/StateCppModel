@@ -10,7 +10,6 @@ Widget::Widget(QWidget *parent) :
     /// Create the object
     ///////////////////////////////////////////////////////////
     object = new Model();
-    // object->send(1);
     ///////////////////////////////////////////////////////////
 
     ui->setupUi(this);
@@ -117,8 +116,8 @@ void Widget::makePlot() {
 
     /// Update the object here
     ///////////////////////////////////////////////////////////
-//    output.append(object->update_discrete(signal));
-    output.append(object->update_continuous(signal, object->TIME_STEP));
+    output.append(object->update_discrete(signal));
+    // output.append(object->update_continuous(signal, object->TIME_STEP));
     ///////////////////////////////////////////////////////////
 
     inputPlot->addGraph();

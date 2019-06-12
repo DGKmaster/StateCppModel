@@ -20,7 +20,7 @@ class Model
 private:
     const double OMEGA = 0.1;
 
-    const QString SERIAL_PORT_NAME = "/dev/pts/11";
+    const QString SERIAL_PORT_NAME = "/dev/pts/4";
     const int SERIAL_PORT_BAUD_RATE = QSerialPort::Baud115200;
     const QSerialPort::DataBits DATA_BITS = QSerialPort::Data8;
     const QSerialPort::Parity PARITY = QSerialPort::NoParity;
