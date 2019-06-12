@@ -117,7 +117,8 @@ void Widget::makePlot() {
 
     /// Update the object here
     ///////////////////////////////////////////////////////////
-    output.append(object->update(signal));
+//    output.append(object->update_discrete(signal));
+    output.append(object->update_continuous(signal, object->TIME_STEP));
     ///////////////////////////////////////////////////////////
 
     inputPlot->addGraph();

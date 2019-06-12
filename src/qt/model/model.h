@@ -26,12 +26,19 @@ private:
     const QSerialPort::Parity PARITY = QSerialPort::NoParity;
     const QSerialPort::StopBits STOP_BITS = QSerialPort::OneStop;
 
+    Matrix A = Matrix(3, 3);
     Matrix Ad = Matrix(3, 3);
+
+    Matrix B = Matrix(3, 1);
     Matrix Bd = Matrix(3, 1);
+
+    Matrix C = Matrix(1, 3);
     Matrix Cd = Matrix(1, 3);
+
     Matrix x = Matrix(3, 1);
+    Matrix x_prev = Matrix(3, 1);
+    
     Matrix y = Matrix(1, 1);
-	Matrix x_prev = Matrix(3, 1);
     Matrix u_state = Matrix(2, 1);
 
     Integrator _du_state = Integrator(-3 * OMEGA * 0.84147, 0);
@@ -64,7 +71,9 @@ public:
     ///////////////////////////////////////////////////////////
     void send(const double& value);
 
-    double update(const double& input);
+    double update_discrete(const double& input);
+    
+    double update_continuous(const double input, const double dt);
 
     double control();
     ///////////////////////////////////////////////////////////

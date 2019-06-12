@@ -7,16 +7,16 @@ Model::Model() {
     Matrix In(3, 3, _In);
 
     double _A[] = {0, 1, 0, 0, 0, 1, -1.5, -5, -2};
-    Matrix A = Matrix(3, 3, _A);
+    this->A = Matrix(3, 3, _A);
 
     this->Ad = A.matExp(TIME_STEP);
 
     double _B[] = {0, 0, 1};
-    Matrix B = Matrix(3, 1, _B);
+    this->B = Matrix(3, 1, _B);
     this->Bd = A.inverse()*(Ad - In)*B;
 
     double _C[] = {0.5, 0, 0};
-    Matrix C = Matrix(1, 3, _C);
+    this->C = Matrix(1, 3, _C);
     this->Cd = C;
 
     double _x[] = {0, 0, 0};
@@ -75,13 +75,32 @@ void Model::send(const double& value) {
     }
 }
 
-double Model::update(const double& input) {
+double Model::update_discrete(const double& input) {
     this->x_prev = this->x;
     this->x = this->Ad*x + this->Bd*input;
     this->y = this->Cd*this->x_prev;
 
-    double output = this->y.getM();
+    double output = this->y.getElement(0);
 
+    return output;
+}
+
+double Model::update_continuous(const double input, const double dt) {
+    Matrix x_internal = Matrix(3, 1);
+    
+    Matrix dx_internal = Matrix(3, 1);
+    dx_internal = this->A * this->x_prev + this->B * input;
+
+    for(uint16_t i = 0; i < 3; i++) {
+        double value = this->x_prev.getElement(i) + dx_internal.getElement(i) * dt;
+        x_internal.setElement(i, value);
+    }
+
+    Matrix y_internal = Matrix(1, 1);
+    y_internal = this->C * this->x_prev;
+    this->x_prev = x_internal;
+
+    double output = y_internal.getElement(0);
     return output;
 }
 
