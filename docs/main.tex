@@ -15,7 +15,7 @@
 \usepackage{textcomp}
 \usepackage{titlesec}
 \usepackage{alltt}
-
+\usepackage{float}
 \usepackage{cite}
 \usepackage{url}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,10 +115,12 @@
 \chapter*{Исходные данные}
 \addcontentsline{toc}{chapter}{Исходные данные}
 
+Входной сигнал задается в следующем виде:
 \begin{equation}
     u(t) = 3 \cdot  cos(0.1 \cdot t + 1)
 \end{equation}
 
+Система представлена в виде Вход-Состояние-Выход. Матрицы A, B, C выглядят следующим образом:
 \begin{equation}
     A = 
     \begin{bmatrix} 
@@ -144,6 +146,7 @@
     \end{bmatrix}
 \end{equation}
 
+Расчет выходного сигнала проходит по следующим формулам:
 \begin{equation}
 \dot x = A \cdot x + B \cdot u(t)
 \end{equation}
@@ -159,13 +162,13 @@ y = C \cdot x
 \addcontentsline{toc}{chapter}{Ход работы}
 Исходный код программы представлен в приложении А. 
 
-Программно реализовать отдельными классами четыре случая объектов 
-(непрерывный и три дискретных). Для дискретных случаев сделать 
-реализацию с использованием разностных уравнений.
+Непрерывная система отличается от дискретной отличается способом 
+расчета вектора состояния и параметрами системы. Переходные процессы для дискретной и непрерывной системы отличаются 
+только в случае очень большого шага дискретизации.
 
 Переходной процесс непрерывной системы 
 представлен на рис.\ref{fig:contin}.
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=160mm]{img/cont.png}
     \caption{Переходной процесс непрерывной системы}
@@ -174,8 +177,7 @@ y = C \cdot x
 
 Переходной процесс дискретной системы с шагом дискретизации 
 5 Гц представлен на рис.\ref{fig:discrete5}.
-
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=160mm]{img/5hz.png}
     \caption{Переходной процесс дискретной системы 
@@ -186,7 +188,7 @@ y = C \cdot x
 Переходной процесс дискретной системы с шагом дискретизации 
 50 Гц представлен на рис.\ref{fig:discrete50}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=160mm]{img/50hz.png}
     \caption{Переходной процесс дискретной системы 
@@ -197,12 +199,31 @@ y = C \cdot x
 Переходной процесс дискретной системы с шагом дискретизации 
 100 Гц представлен на рис.\ref{fig:discrete100}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=160mm]{img/100hz.png}
     \caption{Переходной процесс дискретной системы 
     с шагом дискретизации 100 Гц}
     \label{fig:discrete100}
+\end{figure}
+
+Для проверки работы UART был эмулирован терминал OS Linux, в который было отправлено тестовое значение 
+42.0 используя заданные параметры передачи данных. 
+Результат отправки представлен на рис.\ref{fig:uart}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=160mm]{img/100hz.png}
+    \caption{Отправка сигнала по UART}
+    \label{fig:uart}
+\end{figure}
+
+Кодировка сигнала происходит с помощью стороннего заголовочного файла. 
+Результат кодировки сигнала 42.0 представлен на рис.\ref{fig:cobs}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=160mm]{img/100hz.png}
+    \caption{Отправка зашифрованного сигнала}
+    \label{fig:cobs}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
