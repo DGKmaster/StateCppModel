@@ -32,10 +32,14 @@ Matrix::Matrix(const uint16_t& r, const uint16_t& c):
     }
 }
 
-double Matrix::getM() {
-    double output = this->mx[0];
+double Matrix::getElement(const uint16_t& i) const {
+    double output = this->mx[i];
 
     return output;
+}
+
+void Matrix::setElement(const uint16_t i, const double& element) {
+    this->mx[i] = element;
 }
 
 Matrix Matrix::operator*(const Matrix &matrix) const {

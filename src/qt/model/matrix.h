@@ -43,7 +43,9 @@ class Matrix {
         
         /// Accessors
         ///////////////////////////////////////////////////////////
-        double getM();
+        double getElement(const uint16_t& i) const;
+
+        void setElement(const uint16_t i, const double& element);
         ///////////////////////////////////////////////////////////
 
         /// Operators overload
