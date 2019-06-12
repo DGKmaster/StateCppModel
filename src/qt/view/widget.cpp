@@ -7,20 +7,18 @@ Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
 {
-    // --------------------------
-    // Create the object here
-    // --------------------------
-    object = new Model();   // <=
-    // --------------------------
-    // Create the object here
-    // --------------------------
+    /// Create the object
+    ///////////////////////////////////////////////////////////
+    object = new Model();
+    // object->send(1);
+    ///////////////////////////////////////////////////////////
 
     ui->setupUi(this);
 
-    // Set window size
+    /// Set window size
     this->setFixedSize(1400,700);
 
-    // Add main layout with two plots
+    /// Add main layout with two plots
     mainlayout = new QGridLayout(this);
     inputPlot = new QCustomPlot(this);
     outputPlot = new QCustomPlot(this);
@@ -29,47 +27,42 @@ Widget::Widget(QWidget *parent) :
     inputPlot->setFixedSize(this->width()/2,this->height());
     outputPlot->setFixedSize(this->width()/2,this->height());
 
-    // Give the axes some labels:
+    /// Give the axes some labels:
     inputPlot->xAxis->setLabel("t");
     inputPlot->yAxis->setLabel("input");
     outputPlot->xAxis->setLabel("t");
     outputPlot->yAxis->setLabel("output");
 
-    // --------------------------
-    // Change ranges if you need
-    // --------------------------
-    // Set axes ranges so see all data:
+    /// Change ranges if you need
+    ///////////////////////////////////////////////////////////
+    /// Set axes ranges so see all data:
     inputPlot->xAxis->setRange(0, object->SIMULATION_TIME);
     inputPlot->yAxis->setRange(-3, 3);
     outputPlot->xAxis->setRange(0, object->SIMULATION_TIME);
     outputPlot->yAxis->setRange(-1, 1);
 
-    // Get time in msec
-    // --------------------------
-    // Google for MacOS timings
-    // --------------------------
-#ifdef __linux__
-    struct timeval tmpStruct;
-    gettimeofday(&tmpStruct, nullptr);
-    startTime = tmpStruct.tv_sec * 1000 + tmpStruct.tv_usec / 1000 + 0.5;
-#endif
-#ifdef _WIN32
-    SYSTEMTIME tmpStruct;
-    GetSystemTime(&tmpStruct);
-    startTime = tmpStruct.wSecond * 1000 + tmpStruct.wMilliseconds + 0.5;
-#endif
+    /// Get time in msec
+    ///////////////////////////////////////////////////////////
+    #ifdef __linux__
+        struct timeval tmpStruct;
+        gettimeofday(&tmpStruct, nullptr);
+        startTime = tmpStruct.tv_sec * 1000 + tmpStruct.tv_usec / 1000 + 0.5;
+    #endif
+    #ifdef _WIN32
+        SYSTEMTIME tmpStruct;
+        GetSystemTime(&tmpStruct);
+        startTime = tmpStruct.wSecond * 1000 + tmpStruct.wMilliseconds + 0.5;
+    #endif
+    ///////////////////////////////////////////////////////////
 
     makePlot();
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(makePlot()));
 
-    // --------------------------
-    // Set sampling time here
-    // --------------------------
+    /// Set sampling time
+    ///////////////////////////////////////////////////////////
     timer->start(object->TIME_STEP);
-    // --------------------------
-    // Set sampling time here
-    // --------------------------
+    ///////////////////////////////////////////////////////////
 }
 
 Widget::~Widget()
@@ -80,13 +73,10 @@ Widget::~Widget()
     delete timer;
     delete mainlayout;
 
-    // --------------------------
-    // Delete the object here
-    // --------------------------
+    /// Delete the object
+    ///////////////////////////////////////////////////////////
     delete object;
-    // --------------------------
-    // Delete the object here
-    // --------------------------
+    ///////////////////////////////////////////////////////////
 }
 
 void Widget::makePlot() {
@@ -102,21 +92,18 @@ void Widget::makePlot() {
     double tmp = tmpTime.wSecond * 1000 + tmpTime.wMilliseconds + 0.5 - startTime;
 #endif
 
-    // --------------------------
-    // Replace input signal with ours
-    // --------------------------
+    /// Replace input signal with ours
+    ///////////////////////////////////////////////////////////
     // double signal = std::sin(tmp/1000);
     double signal = object->control();
     // double signal = 1;
     // object->send(signal);
-    // --------------------------
-    // Replace input signal with ours
-    // --------------------------
+    ///////////////////////////////////////////////////////////
 
-    // Update input array to plot
+    /// Update input array to plot
     input.append(signal);
 
-    // Get elapsed time
+    /// Get elapsed time
     if (time.empty()) {
         dt = 0;
     } else {
@@ -125,16 +112,13 @@ void Widget::makePlot() {
 
     object->time_now += object->TIME_STEP;
 
-    // Update time array to plot
+    /// Update time array to plot
     time.append(object->time_now);
 
-    // --------------------------
-    // Update the object here
-    // --------------------------
+    /// Update the object here
+    ///////////////////////////////////////////////////////////
     output.append(object->update(signal));
-    // --------------------------
-    // Update the object here
-    // --------------------------
+    ///////////////////////////////////////////////////////////
 
     inputPlot->addGraph();
     inputPlot->graph(0)->setData(time, input);
