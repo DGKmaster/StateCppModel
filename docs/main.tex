@@ -187,6 +187,52 @@ y(t) = C \cdot x(t)
 при помощи начальных условий интеграторов. В логике программного кода - 
 величиной предыдущего состояния.
 
+Итого модель дискретной системы рассчитывается следующим образом.
+Сначала задаются начальные условия для входного сигнала.
+
+\begin{equation}
+    du_{0} = -3 \cdot \omega \cdot 0.84147
+\end{equation}
+
+\begin{equation}
+    u_{0} = 3 * 0.54030
+\end{equation}
+
+Далее формулы для расчета следующих состояний входного сигнала.
+
+\begin{equation}
+    du_{k+1} = du_{k} + -\omega^2 \cdot u_{k} \cdot \Delta t
+\end{equation}
+
+\begin{equation}
+    u_{k+1} = u_{k} + du_{k} \cdot \Delta t
+\end{equation}
+
+И последним рассчитывается выход системы.
+
+\begin{equation}
+    x_{k+1} = A_{d} \cdot x_{k} + B_{d} \cdot u_{k}
+\end{equation}
+
+\begin{equation}
+    y_{k+1} = C_{d} \cdot x_{k}
+\end{equation}
+
+В случае непрерывной системы используется другая формула для 
+обновления вектора состояния.
+
+\begin{equation}
+    dx_{k+1} = A \cdot x_{k} + B \cdot u_{k}
+\end{equation}
+
+\begin{equation}
+    x_{k+1} = x_{k} + dx_{k} \cdot \Delta t
+\end{equation}
+
+\begin{equation}
+    y_{k+1} = C \cdot x_{k}
+\end{equation}
+
 Ниже приведены параметры системы в случае шага дискретизации 5 Гц.
 
 \begin{equation}
