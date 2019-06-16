@@ -8,8 +8,6 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{wrapfig}
-\usepackage{listings}
-\usepackage{color}
 \usepackage{verbatim}
 \usepackage{indentfirst}
 \usepackage{textcomp}
@@ -18,6 +16,17 @@
 \usepackage{float}
 \usepackage{cite}
 \usepackage{url}
+\usepackage{listings}
+\usepackage{color}
+
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily,
+    keywordstyle=\color{blue}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    commentstyle=\color{green}\ttfamily,
+    morecomment=[l][\color{magenta}]{\#}
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \titleformat{\chapter}[display]
@@ -41,9 +50,6 @@
 
 %% Отступ от левого края
 \oddsidemargin=0pt 
-
-\lstdefinestyle{customc}{belowcaptionskip=1\baselineskip,breaklines=true,frame=L,xleftmargin=\parindent,  language=C, showstringspaces=false, basicstyle=\footnotesize\ttfamily,keywordstyle=\bfseries\color{green!40!black},  commentstyle=\itshape\color{purple!40!black}, identifierstyle=\color{blue}, stringstyle=\color{orange},numbers=left,numbersep=12pt, numberstyle=\small\color{mygray},}
-\lstset{escapechar=@,style=customc}
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
@@ -133,7 +139,7 @@
 \begin{equation}
     B = 
     \begin{bmatrix} 
-        0 \\ 
+        0 \\
         0 \\
         1
     \end{bmatrix}
@@ -262,45 +268,63 @@ y(t) = C \cdot x(t)
     \end{bmatrix}
 \end{equation}
 
-Переходной процесс непрерывной системы 
-представлен на рис.\ref{fig:contin}.
+Переходной процесс непрерывной системы с шагом дискретизации 
+5 Гц представлен на рис.\ref{fig:con_5hz}.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=160mm]{img/cont.png}
-    \caption{Переходной процесс непрерывной системы}
-    \label{fig:contin}
+    \includegraphics[width=160mm]{img/con_5hz.png}
+    \caption{Переходной процесс непрерывной системы с шагом дискретизации 5 Гц}
+    \label{fig:con_5hz}
 \end{figure}
 
 Переходной процесс дискретной системы с шагом дискретизации 
-5 Гц представлен на рис.\ref{fig:discrete5}.
+5 Гц представлен на рис.\ref{fig:dis_5hz}.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=160mm]{img/5hz.png}
+    \includegraphics[width=160mm]{img/dis_5hz.png}
     \caption{Переходной процесс дискретной системы 
     с шагом дискретизации 5 Гц}
-    \label{fig:discrete5}
+    \label{fig:dis_5hz}
+\end{figure}
+
+Переходной процесс непрерывной системы с шагом дискретизации 
+50 Гц представлен на рис.\ref{fig:con_50hz}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=160mm]{img/con_50hz.png}
+    \caption{Переходной процесс непрерывной системы с шагом дискретизации 5 Гц}
+    \label{fig:con_50hz}
 \end{figure}
 
 Переходной процесс дискретной системы с шагом дискретизации 
-50 Гц представлен на рис.\ref{fig:discrete50}.
+50 Гц представлен на рис.\ref{fig:dis_50hz}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=160mm]{img/50hz.png}
+    \includegraphics[width=160mm]{img/dis_50hz.png}
     \caption{Переходной процесс дискретной системы 
     с шагом дискретизации 50 Гц}
-    \label{fig:discrete50}
+    \label{fig:dis_50hz}
+\end{figure}
+
+Переходной процесс непрерывной системы с шагом дискретизации 
+100 Гц представлен на рис.\ref{fig:con_100hz}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=160mm]{img/con_100hz.png}
+    \caption{Переходной процесс непрерывной системы с шагом дискретизации 5 Гц}
+    \label{fig:con_100hz}
 \end{figure}
 
 Переходной процесс дискретной системы с шагом дискретизации 
-100 Гц представлен на рис.\ref{fig:discrete100}.
+100 Гц представлен на рис.\ref{fig:dis_100hz}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=160mm]{img/100hz.png}
+    \includegraphics[width=160mm]{img/dis_100hz.png}
     \caption{Переходной процесс дискретной системы 
     с шагом дискретизации 100 Гц}
-    \label{fig:discrete100}
+    \label{fig:dis_100hz}
 \end{figure}
 
 Для проверки работы UART был эмулирован терминал OS Linux, в который было отправлено тестовое значение 
@@ -345,55 +369,17 @@ y(t) = C \cdot x(t)
 \chapter*{Приложение А. Исходный код программы}
 \addcontentsline{toc}{chapter}{Приложение А. Исходный код программы}
 
-\textbf{Файл model.h}
-\begin{alltt}
-    \verbatiminput{./../src/qt/model/model.h}
-\end{alltt}
+\lstinputlisting[language=C++, caption=Файл model.h]{./../src/qt/model/model.h}
+\lstinputlisting[language=C++, caption=Файл model.cpp]{./../src/qt/model/model.cpp}
+\lstinputlisting[language=C++, caption=Файл integrator.h]{./../src/qt/model/integrator.h}
+\lstinputlisting[language=C++, caption=Файл integrator.cpp]{./../src/qt/model/integrator.cpp}
+\lstinputlisting[language=C++, caption=Файл matrix.h]{./../src/qt/model/matrix.h}
+\lstinputlisting[language=C++, caption=Файл matrix.cpp]{./../src/qt/model/matrix.cpp}
+\lstinputlisting[language=C++, caption=Файл main.cpp]{./../src/qt/main.cpp}
+\lstinputlisting[language=C++, caption=Файл widget.h]{./../src/qt/view/widget.h}
+\lstinputlisting[language=C++, caption=Файл widget.cpp]{./../src/qt/view/widget.cpp}
+\lstinputlisting[language=C++, caption=Файл cobs.h]{./../src/qt/model/cobs.h}
 
-\textbf{Файл model.cpp}
-\begin{alltt}
-    \verbatiminput{./../src/qt/model/model.cpp}
-\end{alltt}
-
-\textbf{Файл integrator.h}
-\begin{alltt}
-    \verbatiminput{./../src/qt/model/integrator.h}
-\end{alltt}
-
-\textbf{Файл integrator.cpp}
-\begin{alltt}
-    \verbatiminput{./../src/qt/model/integrator.cpp}
-\end{alltt}
-
-\textbf{Файл matrix.h}
-\begin{alltt}
-    \verbatiminput{./../src/qt/model/matrix.h}
-\end{alltt}
-
-\textbf{Файл matrix.cpp}
-\begin{alltt}
-    \verbatiminput{./../src/qt/model/matrix.cpp}
-\end{alltt}
-
-\textbf{Файл main.cpp}
-\begin{alltt}
-    \verbatiminput{./../src/qt/main.cpp}
-\end{alltt}
-
-\textbf{Файл widget.h}
-\begin{alltt}
-    \verbatiminput{./../src/qt/view/widget.h}
-\end{alltt}
-
-\textbf{Файл widget.cpp}
-\begin{alltt}
-    \verbatiminput{./../src/qt/view/widget.cpp}
-\end{alltt}
-
-\textbf{Файл cobs.h}
-\begin{alltt}
-    \verbatiminput{./../src/qt/model/cobs.h}
-\end{alltt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \end{document}
