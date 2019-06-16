@@ -10,13 +10,17 @@ Matrix::~Matrix() {
     delete[] this->mx;
 }
 
-Matrix::Matrix(const uint16_t& r, const uint16_t& c, const double m[]):
+Matrix::Matrix(
+    const uint16_t& r, 
+    const uint16_t& c, 
+    const double m[]):
     num_rows(r),
     num_columns(c),
     mx(new double[num_rows * num_columns]) {
     for(uint16_t i = 0; i < num_rows; i++) {
         for(uint16_t j = 0; j < num_columns; j++) {
-            this->mx[i*num_columns + j] = m[i*num_columns + j];
+            this->mx[i*num_columns + j] = 
+            m[i*num_columns + j];
         }
     }
 }
@@ -38,7 +42,9 @@ double Matrix::getElement(const uint16_t& i) const {
     return output;
 }
 
-void Matrix::setElement(const uint16_t i, const double& element) {
+void Matrix::setElement(
+    const uint16_t i, 
+    const double& element) {
     this->mx[i] = element;
 }
 
@@ -47,13 +53,22 @@ Matrix Matrix::operator*(const Matrix &matrix) const {
         std::cout << "Bad dimensions =" << std::endl;
     }
 
-    Matrix matrix_out(this->num_rows, matrix.num_columns);
+    Matrix matrix_out(
+        this->num_rows, 
+        matrix.num_columns);
 
     /// Multiplying matrix a and b and storing in array
     for(uint16_t i = 0; i < this->num_rows; i++) {
-        for(uint16_t j = 0; j < matrix.num_columns; j++) {
-            for(uint16_t k = 0; k < this->num_columns; k++) {
-                matrix_out.mx[i*matrix_out.num_columns + j] += this->mx[i*this->num_columns + k] * matrix.mx[k*matrix.num_columns + j];
+        for(uint16_t j = 0; 
+        j < matrix.num_columns; 
+        j++) {
+            for(uint16_t k = 0; 
+            k < this->num_columns; 
+            k++) {
+                matrix_out.mx[
+                    i*matrix_out.num_columns + j] 
+                += this->mx[i*this->num_columns + k] 
+                * matrix.mx[k*matrix.num_columns + j];
             }
         }
     }
@@ -68,8 +83,11 @@ Matrix Matrix::operator*(const double &value) const {
     Matrix matrix_out(N, M);
 
     for(uint16_t i = 0; i < N; i++) {
-        for(uint16_t j = 0; j < M; j++) {
-            matrix_out.mx[i*M + j] = this->mx[i*M + j] * value;
+        for(uint16_t j = 0; 
+        j < M; 
+        j++) {
+            matrix_out.mx[i*M + j] = 
+            this->mx[i*M + j] * value;
         }
     }
 
@@ -82,9 +100,12 @@ Matrix Matrix::operator/(const double &value) const {
 
     Matrix matrix_out(N, M);
 
-    for(uint16_t i = 0; i < N; i++) {
-        for(uint16_t j = 0; j < M; j++) {
-            matrix_out.mx[i*M + j] = this->mx[i*M + j] / value;
+    for(uint16_t i = 0; 
+    i < N; i++) {
+        for(uint16_t j = 0; 
+        j < M; j++) {
+            matrix_out.mx[i*M + j] = 
+            this->mx[i*M + j] / value;
         }
     }
 
@@ -95,7 +116,8 @@ Matrix Matrix::operator+(const Matrix &matrix) const {
     const uint16_t N = this->num_rows;
     const uint16_t M = this->num_columns;
 
-    if(N != matrix.num_rows && M != matrix.num_columns) {
+    if(N != matrix.num_rows && 
+    M != matrix.num_columns) {
         std::cout << "Bad dimensions +" << std::endl;
     }
 
@@ -103,7 +125,8 @@ Matrix Matrix::operator+(const Matrix &matrix) const {
 
     for(uint16_t i = 0; i < N; i++) {
         for(uint16_t j = 0; j < M; j++) {
-            matrix_out.mx[i*M + j] = this->mx[i*M + j] + matrix.mx[i*M + j];
+            matrix_out.mx[i*M + j] = 
+            this->mx[i*M + j] + matrix.mx[i*M + j];
         }
     }
 
@@ -115,7 +138,8 @@ Matrix Matrix::operator-(const Matrix &matrix) const {
     const uint16_t N = this->num_rows;
     const uint16_t M = this->num_columns;
 
-    if(N != matrix.num_rows && M != matrix.num_columns) {
+    if(N != matrix.num_rows && 
+    M != matrix.num_columns) {
         std::cout << "Bad dimensions -" << std::endl;
     }
 
@@ -124,7 +148,8 @@ Matrix Matrix::operator-(const Matrix &matrix) const {
     /// Multiplying matrix a and b and storing in array
     for(uint16_t i = 0; i < N; i++) {
         for(uint16_t j = 0; j < M; j++) {
-            matrix_out.mx[i*M + j] = this->mx[i*M + j] - matrix.mx[i*M + j];
+            matrix_out.mx[i*M + j] = 
+            this->mx[i*M + j] - matrix.mx[i*M + j];
         }
     }
 
@@ -159,7 +184,10 @@ void Matrix::show(const std::string& text_out) const {
 }
 
 
-Matrix Matrix::getCofactor(const uint16_t& p, const uint16_t& q, const int16_t& n) {
+Matrix Matrix::getCofactor(
+    const uint16_t& p, 
+    const uint16_t& q, 
+    const int16_t& n) {
     const uint16_t N = this->num_rows;
 
     Matrix matrix_out(N, N);
@@ -169,14 +197,18 @@ Matrix Matrix::getCofactor(const uint16_t& p, const uint16_t& q, const int16_t& 
 
     /// Looping for each element of the matrix
     for (uint16_t row = 0; row < n; row++) {
-        for (uint16_t col = 0; col < n; col++) {
-            ///  Copying into temporary matrix only those element
-            ///  which are not in given row and column
+        for (uint16_t col = 0; 
+        col < n; col++) {
+            /// Copying into temporary 
+            /// matrix only those element
+            /// which are not in given row and column
             if (row != p && col != q) {
-                matrix_out.mx[i*N + j] = this->mx[row*N + col];
+                matrix_out.mx[i*N + j] = 
+                this->mx[row*N + col];
                 j++;
 
-                /// Row is filled, so increase row index and
+                /// Row is filled, so 
+                /// increase row index and
                 /// reset col index
                 if (j == n - 1) {
                     j = 0;
@@ -211,7 +243,8 @@ double Matrix::determinant(const uint16_t& n) {
         /// Getting Cofactor
         _temp = this->getCofactor(0, i, n);
 
-        D += _sign * this->mx[0*N + i] * _temp.determinant(n - 1);
+        D += _sign * 
+        this->mx[0*N + i] * _temp.determinant(n - 1);
 
         /// terms are to be added with alternate sign
         _sign = -_sign;
@@ -234,13 +267,16 @@ Matrix Matrix::adjoint() {
             /// Get cofactor of A[i][j]
             _temp = this->getCofactor(i, j, N);
 
-            /// sign of adj[j][i] positive if sum of row
+            /// sign of adj[j][i] 
+            /// positive if sum of row
             /// and column indexes is even.
             _sign = ((i + j) % 2 == 0)? 1: -1;
 
-            /// Interchanging rows and columns to get the
+            /// Interchanging rows 
+            /// and columns to get the
             /// transpose of the cofactor matrix
-            matrix_out.mx[j*N + i] = _sign*_temp.determinant(N - 1);
+            matrix_out.mx[j*N + i] = 
+            _sign*_temp.determinant(N - 1);
         }
     }
 
@@ -255,7 +291,9 @@ Matrix Matrix::inverse() {
     double det = this->determinant(N);
 
     if (det == 0.0) {
-        std::cout << "Singular matrix, can't find its inverse" << std::endl;
+        std::cout << 
+        "Singular matrix, can't find its inverse" 
+        << std::endl;
     }
     Matrix matrix_out(N, N);
 
@@ -263,10 +301,12 @@ Matrix Matrix::inverse() {
     Matrix adj(N, N);
     adj = this->adjoint();
 
-    /// Find Inverse using formula "inverse(A) = adj(A)/det(A)"
+    /// Find Inverse using formula 
+    /// "inverse(A) = adj(A)/det(A)"
     for (uint16_t i = 0; i < N; i++) {
         for (uint16_t j = 0; j < N; j++) {
-            matrix_out.mx[i*N + j] = adj.mx[i*N + j] / det;
+            matrix_out.mx[i*N + j] = 
+            adj.mx[i*N + j] / det;
         }
     }
 
@@ -286,7 +326,8 @@ Matrix Matrix::matExp(double dt) {
     
     /// First step - just matrix_out
     /// Second step - matrix_out + ...
-    matrix_out = matrix_out + (A_power * dt_power) / factorial;
+    matrix_out = matrix_out + 
+    (A_power * dt_power) / factorial;
 
     /// Third step and following
     for (uint16_t k = 2; k < 4; k++) {
@@ -294,7 +335,8 @@ Matrix Matrix::matExp(double dt) {
         dt_power = dt_power * dt;
         factorial = factorial * k;
 
-        matrix_out = matrix_out + (A_power * dt_power) / factorial;
+        matrix_out = matrix_out 
+        + (A_power * dt_power) / factorial;
     }
 
     return matrix_out;

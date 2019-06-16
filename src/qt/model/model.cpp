@@ -2,7 +2,7 @@
 
 Model::Model() {
     ///
-    ///////////////////////////////////////////////////////////
+    //////////////////////////////////////
     double _In[] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
     Matrix In(3, 3, _In);
 
@@ -28,12 +28,14 @@ Model::Model() {
     /// -sin(1rad)*omega*amplitude
     double _u_state[] = {0.54*3, 0.84147*-0.3};
     this->u_state = Matrix(2, 1, _u_state);
-    ///////////////////////////////////////////////////////////
+    //////////////////////////////////////
     
     ///
-    ///////////////////////////////////////////////////////////
-    this->serial_port.setPortName(this->SERIAL_PORT_NAME);
-    this->serial_port.setBaudRate(this->SERIAL_PORT_BAUD_RATE);
+    //////////////////////////////////////
+    this->serial_port.setPortName(
+        this->SERIAL_PORT_NAME);
+    this->serial_port.setBaudRate(
+        this->SERIAL_PORT_BAUD_RATE);
     this->serial_port.setDataBits(this->DATA_BITS);
     this->serial_port.setParity(this->PARITY);
     this->serial_port.setStopBits(this->STOP_BITS);
@@ -45,7 +47,7 @@ Model::Model() {
     this->send(42);
 
     serial_port.close();
-    ///////////////////////////////////////////////////////////
+    //////////////////////////////////////
 }
 
 Model::~Model() {
@@ -68,14 +70,20 @@ void Model::send(const double& value) {
     os << buffer_uint;
     
     QByteArray write_data(os.str().c_str());
-    qint64 bytes_written = serial_port.write(write_data);
+    qint64 bytes_written = 
+    serial_port.write(write_data);
 
     if (bytes_written == -1) {
-        std::cout << "Failed to write the data" << std::endl;
+        std::cout 
+        << "Failed to write the data" << std::endl;
     } else if (bytes_written != write_data.size()) {
-        std::cout << "Failed to write all the data" << std::endl;
-    } else if (!serial_port.waitForBytesWritten(5000)) {
-        std::cout << "Operation timed out or an error" << std::endl;  
+        std::cout 
+        << "Failed to write all the data" << std::endl;
+    } else 
+    if (!serial_port.waitForBytesWritten(5000)) {
+        std::cout 
+        << "Operation timed out or an error" 
+        << std::endl;  
     }
 }
 
@@ -89,14 +97,19 @@ double Model::update_discrete(const double& input) {
     return output;
 }
 
-double Model::update_continuous(const double input, const double dt) {
+double Model::update_continuous(
+    const double input, 
+    const double dt) {
     Matrix x_internal = Matrix(3, 1);
     
     Matrix dx_internal = Matrix(3, 1);
-    dx_internal = this->A * this->x_prev + this->B * input;
+    dx_internal = 
+    this->A * this->x_prev + this->B * input;
 
     for(uint16_t i = 0; i < 3; i++) {
-        double value = this->x_prev.getElement(i) + dx_internal.getElement(i) * dt;
+        double value = 
+        this->x_prev.getElement(i) 
+        + dx_internal.getElement(i) * dt;
         x_internal.setElement(i, value);
     }
 
@@ -110,7 +123,7 @@ double Model::update_continuous(const double input, const double dt) {
 
 double Model::control() {
     /// Constants
-    ///////////////////////////////////////////////////////////
+    //////////////////////////////////////
     const double T = this->TIME_STEP;
 
     const double _In[] = {1, 0, 0, 1};
@@ -118,9 +131,9 @@ double Model::control() {
 
     const double _u_A[] = {0, -1, OMEGA*OMEGA, 0};
     const Matrix u_A = Matrix(2, 2, _u_A);
-    ///////////////////////////////////////////////////////////
+    //////////////////////////////////////
 
-    ///////////////////////////////////////////////////////////
+    //////////////////////////////////////
     Matrix mat_exp = Matrix(2, 1);
     Matrix u = Matrix(2, 1);
     
@@ -130,7 +143,7 @@ double Model::control() {
     this->_u_state.update(_du_state.getState(), T);
     
     feedback = -OMEGA*OMEGA*_u_state.getState();
-    ///////////////////////////////////////////////////////////
+    //////////////////////////////////////
 
     return signal;
 }

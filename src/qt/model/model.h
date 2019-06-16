@@ -16,15 +16,19 @@
 class Model
 {
 /// Attributes
-///////////////////////////////////////////////////////////
+//////////////////////////////////////
 private:
     const double OMEGA = 0.1;
 
-    const QString SERIAL_PORT_NAME = "/dev/pts/4";
-    const int SERIAL_PORT_BAUD_RATE = QSerialPort::Baud115200;
-    const QSerialPort::DataBits DATA_BITS = QSerialPort::Data8;
-    const QSerialPort::Parity PARITY = QSerialPort::NoParity;
-    const QSerialPort::StopBits STOP_BITS = QSerialPort::OneStop;
+    const QString SERIAL_PORT_NAME = "/dev/pts/6";
+    const int SERIAL_PORT_BAUD_RATE = 
+    QSerialPort::Baud115200;
+    const QSerialPort::DataBits DATA_BITS = 
+    QSerialPort::Data8;
+    const QSerialPort::Parity PARITY = 
+    QSerialPort::NoParity;
+    const QSerialPort::StopBits STOP_BITS = 
+    QSerialPort::OneStop;
 
     Matrix A = Matrix(3, 3);
     Matrix Ad = Matrix(3, 3);
@@ -41,7 +45,8 @@ private:
     Matrix y = Matrix(1, 1);
     Matrix u_state = Matrix(2, 1);
 
-    Integrator _du_state = Integrator(-3 * OMEGA * 0.84147, 0);
+    Integrator _du_state = 
+    Integrator(-3 * OMEGA * 0.84147, 0);
     Integrator _u_state = Integrator(3 * 0.54030, 0);
 	double feedback;
 
@@ -51,31 +56,33 @@ public:
     /// 0.2 -> 5 Hz
     /// 0.02 -> 50 Hz
     /// 0.01 -> 100 Hz
-    const double TIME_STEP = 0.1;
+    const double TIME_STEP = 0.2;
     const double SIMULATION_TIME = 100;
     double time_now = 0;
 
-///////////////////////////////////////////////////////////
+//////////////////////////////////////
 
 /// Methods
-///////////////////////////////////////////////////////////
+//////////////////////////////////////
 public:
     /// Constructors and destructors
-    ///////////////////////////////////////////////////////////
+    //////////////////////////////////////
     Model();
 
     ~Model();
-    ///////////////////////////////////////////////////////////
+    //////////////////////////////////////
 
     /// 
-    ///////////////////////////////////////////////////////////
+    //////////////////////////////////////
     void send(const double& value);
 
     double update_discrete(const double& input);
     
-    double update_continuous(const double input, const double dt);
+    double update_continuous(
+        const double input, 
+        const double dt);
 
     double control();
-    ///////////////////////////////////////////////////////////
+    //////////////////////////////////////
 };
 #endif // MODEL_H
